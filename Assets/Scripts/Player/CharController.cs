@@ -7,7 +7,7 @@ using System;
 
 public class CharController : MonoBehaviour
 {
-    [SerializeField, Range(0f, 100f)] private float maxSpeed = 10f;
+    [SerializeField, Range(0f, 100f)] private float maxSpeed = 10f, maxGravitySpeed = 10f;
     [SerializeField, Range(0f, 100f)] private float maxAcceleration = 10f, maxAirAcceleration = 1f;
     [SerializeField, Range(-50f, 50f)] private float maxGravityAcceleration = -9.8f;
     [SerializeField, Range(0f, 10f)] private float jumpHeight = 5.0f;
@@ -20,8 +20,11 @@ public class CharController : MonoBehaviour
     private Vector2 moveVector;
     private float desiredMovementVelocity;
     private float desiredGravityVelocity;
+    private float jumpVelocity;
     private bool desiredJump;
+    private bool jumpReleased;
     private bool onGround;
+    private bool fastFall;
     private int jumpPhase;
 
     public float MaxSpeed => maxSpeed;
@@ -31,20 +34,37 @@ public class CharController : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
     }
 
+    private void Start()
+    {
+        jumpReleased = true;
+    }
+
     public void Move(Vector2 moveVector)
     {
         this.moveVector = moveVector;
     }
 
-    public void Jump()
+    public void JumpInitiate()
+    {
+        jumpReleased = false;
+        Jump();
+    }
+
+    private void Jump()
     {
         desiredJump = true;
     }
 
+    public void JumpEnd()
+    {
+        jumpReleased = true;
+        fastFall = true;
+    }
+
     private void Update()
     {
-        desiredMovementVelocity =  moveVector.x * maxSpeed;
-        desiredGravityVelocity =  maxSpeed;
+        desiredMovementVelocity = moveVector.x * maxSpeed;
+        desiredGravityVelocity = -maxSpeed;
     }
 
     private void FixedUpdate()
@@ -56,9 +76,9 @@ public class CharController : MonoBehaviour
             desiredJump = false;
             if (onGround || jumpPhase < maxAirJumps)
             {
-                jumpPhase++;
-                float jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
+                jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
 
+                jumpPhase++;
                 if (velocity.y > 0f)
                 {
                     jumpVelocity = Mathf.Max(jumpVelocity - velocity.y, 0f);
@@ -72,22 +92,34 @@ public class CharController : MonoBehaviour
             }
         }
 
+        if (fastFall)
+        {
+            if (velocity.y >= jumpVelocity / 2f)
+                velocity.y += (-1f * jumpVelocity) / 2f;
+
+            fastFall = false;
+        }
+
         float acceleration = onGround ? maxAcceleration : maxAirAcceleration;
-        float maxChangeSpeed = acceleration * Time.fixedDeltaTime;
+
+        var maxChangeSpeed = acceleration * Time.fixedDeltaTime;
+        if(Mathf.Approximately(desiredMovementVelocity, 0f) && !onGround) 
+            maxChangeSpeed = maxAcceleration * Time.fixedDeltaTime;
         velocity.x = Mathf.MoveTowards(velocity.x, desiredMovementVelocity, maxChangeSpeed);
 
         float maxGravityChange;
-        
+
         if (!onGround && velocity.y < 0f)
         {
-            maxGravityChange = maxGravityAcceleration * Time.deltaTime * 2.0f;
+            maxGravityChange = -maxGravityAcceleration * Time.fixedDeltaTime * 1.5f;
         }
         else
         {
-            maxGravityChange = maxGravityAcceleration * Time.deltaTime;
+            maxGravityChange = -maxGravityAcceleration * Time.fixedDeltaTime;
         }
+
         velocity.y = Mathf.MoveTowards(velocity.y, desiredGravityVelocity, maxGravityChange);
-        
+
 
         rb.velocity = velocity;
 
@@ -119,7 +151,7 @@ public class CharController : MonoBehaviour
         for (int i = 0; i < collision.contactCount; i++)
         {
             Vector2 normal = collision.contacts[i].normal;
-            onGround |= normal.y >= 0.9f;
+            onGround |= normal.y >= 0f;
         }
     }
 }

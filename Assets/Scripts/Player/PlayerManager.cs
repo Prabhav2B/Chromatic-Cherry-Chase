@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine.InputSystem;
 using UnityEngine;
@@ -38,19 +39,28 @@ public class PlayerManager : MonoBehaviour
     
     private void OnJump(InputValue input)
     {
-        characterController.Jump();
+        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        {
+            characterController.JumpInitiate();
+        }
+        else
+        {
+            characterController.JumpEnd();
+        }
     }
 
     void Update()
     {
         if (rb.velocity.x > characterController.MaxSpeed * 0.75f)
         {
-            spriteRendererTransform.DOLocalRotate(Vector3.forward * -24f, 1.0f);
+            //turn into a tweener?
+            spriteRendererTransform.DOLocalRotate(Vector3.forward * -18f, 1.0f);
             spriteRenderer.flipX = false;
         }
         else if (rb.velocity.x < characterController.MaxSpeed * -0.75f)
         {
-            spriteRendererTransform.DOLocalRotate(Vector3.forward * 24f, 1.0f);
+            //turn into a tweener?
+            spriteRendererTransform.DOLocalRotate(Vector3.forward * 18f, 1.0f);
             spriteRenderer.flipX = true;
         }
         else
