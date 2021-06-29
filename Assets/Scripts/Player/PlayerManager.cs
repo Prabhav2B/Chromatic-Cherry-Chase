@@ -42,6 +42,7 @@ public class PlayerManager : MonoBehaviour
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
         {
             characterController.JumpInitiate();
+            SquishStart();
         }
         else
         {
@@ -54,18 +55,31 @@ public class PlayerManager : MonoBehaviour
         if (rb.velocity.x > characterController.MaxSpeed * 0.75f)
         {
             //turn into a tweener?
-            spriteRendererTransform.DOLocalRotate(Vector3.forward * -18f, 1.0f);
+            spriteRendererTransform.DOLocalRotate(Vector3.forward * -5f, 1.0f);
             spriteRenderer.flipX = false;
         }
         else if (rb.velocity.x < characterController.MaxSpeed * -0.75f)
         {
             //turn into a tweener?
-            spriteRendererTransform.DOLocalRotate(Vector3.forward * 18f, 1.0f);
+            spriteRendererTransform.DOLocalRotate(Vector3.forward * 5f, 1.0f);
             spriteRenderer.flipX = true;
         }
         else
         {
             spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
         }
+    }
+
+    void SquishStart()
+    {
+
+        spriteRendererTransform.DOScale(new Vector3(.75f, 1.25f, 1.0f), .15f)
+            .OnComplete(SquishRelease);
+
+    }
+
+    void SquishRelease()
+    {
+        spriteRendererTransform.DOScale(new Vector3(1f, 1f, 1.0f), .15f);
     }
 }

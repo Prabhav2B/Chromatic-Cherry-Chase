@@ -9,9 +9,12 @@ public class CharController : MonoBehaviour
 {
     [SerializeField, Range(0f, 100f)] private float maxSpeed = 10f, maxGravitySpeed = 10f;
     [SerializeField, Range(0f, 100f)] private float maxAcceleration = 10f, maxAirAcceleration = 1f;
+    [SerializeField, Range(0f, 90f)] private float maxGroundAngle = 25f;
     [SerializeField, Range(-50f, 50f)] private float maxGravityAcceleration = -9.8f;
     [SerializeField, Range(0f, 10f)] private float jumpHeight = 5.0f;
-    [SerializeField, Range(0, 5)] int maxAirJumps = 1;
+    [SerializeField, Range(0, 5)] private int maxAirJumps = 1;
+
+    [SerializeField] private bool fastFallActive = false;
 
     private Rigidbody2D rb;
     private Vector2 velocity;
@@ -26,12 +29,16 @@ public class CharController : MonoBehaviour
     private bool onGround;
     private bool fastFall;
     private int jumpPhase;
+    private float minGroundDotProduct;
+    private float naturalUpwardVelocity;
+
 
     public float MaxSpeed => maxSpeed;
 
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
+        OnValidate();
     }
 
     private void Start()
@@ -64,7 +71,7 @@ public class CharController : MonoBehaviour
     private void Update()
     {
         desiredMovementVelocity = moveVector.x * maxSpeed;
-        desiredGravityVelocity = -maxSpeed;
+        desiredGravityVelocity = -maxGravitySpeed;
     }
 
     private void FixedUpdate()
@@ -81,21 +88,23 @@ public class CharController : MonoBehaviour
                 jumpPhase++;
                 if (velocity.y > 0f)
                 {
-                    jumpVelocity = Mathf.Max(jumpVelocity - velocity.y, 0f);
+                    
+                        jumpVelocity = Mathf.Max(jumpVelocity - velocity.y, 0f);
+                    
                 }
-                else if (velocity.y < -0.1f)
+                else if (velocity.y < -0.001f)
                 {
-                    jumpVelocity = Mathf.Max(jumpVelocity - velocity.y, 0f);
+                    jumpVelocity = jumpVelocity - velocity.y;
                 }
 
-                velocity.y += jumpVelocity;
+                velocity.y += jumpVelocity + 1.5f;
             }
         }
 
-        if (fastFall)
+        if (fastFall && fastFallActive)
         {
-            if (velocity.y >= jumpVelocity / 2f)
-                velocity.y += (-1f * jumpVelocity) / 2f;
+            if (velocity.y >= jumpVelocity / 3f)
+                velocity.y += (-1f * jumpVelocity) / 4f;
 
             fastFall = false;
         }
@@ -103,7 +112,7 @@ public class CharController : MonoBehaviour
         float acceleration = onGround ? maxAcceleration : maxAirAcceleration;
 
         var maxChangeSpeed = acceleration * Time.fixedDeltaTime;
-        if(Mathf.Approximately(desiredMovementVelocity, 0f) && !onGround) 
+        if (Mathf.Approximately(desiredMovementVelocity, 0f) && !onGround)
             maxChangeSpeed = maxAcceleration * Time.fixedDeltaTime;
         velocity.x = Mathf.MoveTowards(velocity.x, desiredMovementVelocity, maxChangeSpeed);
 
@@ -133,7 +142,13 @@ public class CharController : MonoBehaviour
         if (onGround)
         {
             jumpPhase = 0;
+            naturalUpwardVelocity = 0f;
         }
+    }
+
+    void OnValidate()
+    {
+        minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -151,7 +166,7 @@ public class CharController : MonoBehaviour
         for (int i = 0; i < collision.contactCount; i++)
         {
             Vector2 normal = collision.contacts[i].normal;
-            onGround |= normal.y >= 0f;
+            onGround |= normal.y >= minGroundDotProduct;
         }
     }
 }
