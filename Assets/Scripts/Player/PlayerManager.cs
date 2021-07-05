@@ -13,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     private Transform spriteRendererTransform;
     private Rigidbody2D rb;
     private CharController characterController;
+    private TimeBend timeBend;
 
     protected Vector2 moveVector;
     public Vector2 PlayerInput { get; private set; }
@@ -24,7 +25,8 @@ public class PlayerManager : MonoBehaviour
 
         rb = this.GetComponent<Rigidbody2D>();
         characterController = GetComponent<CharController>();
-
+        timeBend = GetComponent<TimeBend>();
+        
         spriteRenderer = this.GetComponentInChildren<SpriteRenderer>();
         spriteRendererTransform = spriteRenderer.transform;
     }
@@ -42,11 +44,38 @@ public class PlayerManager : MonoBehaviour
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
         {
             characterController.JumpInitiate();
-            SquishStart();
+            if(!characterController.JumpMaxed)
+                SquishStart();
         }
         else
         {
             characterController.JumpEnd();
+        }
+    }
+    
+    private void OnTimeBend(InputValue input)
+    {
+        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        {
+            timeBend.TimeBendInitiate();
+        }
+        else
+        {
+            timeBend.TimeBendEnd();
+        }
+    }
+    
+    private void OnDash(InputValue input)
+    {
+        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        {
+            characterController.DashInitiate();
+            //if(!characterController.JumpMaxed)
+                //SquishStart();
+        }
+        else
+        {
+            characterController.DashEnd();
         }
     }
 
