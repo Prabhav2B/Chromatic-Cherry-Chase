@@ -6,6 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(CharController))]
 public class PlayerManager : MonoBehaviour
 {
+    [SerializeField] private Sprite playerCoreA;
+    [SerializeField] private Sprite playerCoreB;
+    
     private static PlayerManager playerInstance;
     public static PlayerManager PlayerInstance { get { return playerInstance; } }
     
@@ -77,6 +80,16 @@ public class PlayerManager : MonoBehaviour
         {
             characterController.DashEnd();
         }
+    }
+    
+    private void OnPowerA(InputValue input)
+    {
+        spriteRenderer.sprite = playerCoreA;
+    }
+    
+    private void OnPowerB(InputValue input)
+    {
+        spriteRenderer.sprite = playerCoreB;
     }
 
     void Update()

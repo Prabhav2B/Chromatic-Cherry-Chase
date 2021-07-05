@@ -94,7 +94,6 @@ public class CharController : MonoBehaviour
     {
         desiredMovementVelocity = moveVal * maxSpeed;
         desiredGravityVelocity = -maxGravitySpeed;
-        Debug.Log(isDashing);
     }
 
     private void FixedUpdate()
@@ -194,7 +193,6 @@ public class CharController : MonoBehaviour
         //     
         //
         isDashing = true;
-        Debug.Log("yo");
         rb.velocity = Vector2.zero;
         yield return new WaitForSeconds(.05f);
         
