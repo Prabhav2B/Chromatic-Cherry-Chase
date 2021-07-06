@@ -17,7 +17,7 @@ public class CharController : MonoBehaviour
     [SerializeField, Range(0f, 100f)] private float dashVelocity = 10f;
     [FormerlySerializedAs("discount")] [SerializeField, Range(0f, 1f)]private float dashVelocityDiscount = 0.95f;
     [SerializeField, Range(0, 5)] private int maxAirJumps = 1;
-    [SerializeField, Range(0, 5)] private int maxAirDash = 1;
+    [FormerlySerializedAs("maxAirDash")] [SerializeField, Range(0, 5)] private int maxDash = 1;
 
 
     [SerializeField] private bool fastFallActive = false;
@@ -35,16 +35,16 @@ public class CharController : MonoBehaviour
     private bool desiredJump;
     private bool desiredDash;
     private bool isDashing;
-    private bool jumpReleased;
+    //private bool jumpReleased; -> currently unused;
     private bool onGround;
     private bool fastFall;
     private int jumpPhase;
     private int dashPhase;
+    private int stepsSinceLastJump, stepsSinceLastDash;
     private float minGroundDotProduct;
-    //private float naturalUpwardVelocity;
     private CinemachineImpulseSource _impulseSource;
 
-    public bool JumpMaxed { get; private set; }
+    public bool JumpMaxed => (jumpPhase > maxAirJumps || (!onGround && maxAirJumps == 0));
 
     public float MaxSpeed => maxSpeed;
 
@@ -58,7 +58,7 @@ public class CharController : MonoBehaviour
     {
         _impulseSource = FindObjectOfType<CinemachineImpulseSource>();
         
-        jumpReleased = true;
+        //jumpReleased = true;
     }
 
     public void Move(Vector2 moveVector)
@@ -69,7 +69,7 @@ public class CharController : MonoBehaviour
 
     public void JumpInitiate()
     {
-        jumpReleased = false;
+        //jumpReleased = false;
         Jump();
     }
 
@@ -80,7 +80,7 @@ public class CharController : MonoBehaviour
 
     public void JumpEnd()
     {
-        jumpReleased = true;
+        //jumpReleased = true;
         fastFall = true;
     }
 
@@ -106,14 +106,18 @@ public class CharController : MonoBehaviour
         if (isDashing)
             return;
 
-
         UpdateState();
 
         if (desiredJump)
         {
             desiredJump = false;
-            if (jumpPhase < maxAirJumps || onGround)
+            
+            if ((maxAirJumps > 0 && jumpPhase <= maxAirJumps))
             {
+                if (jumpPhase == 0 && !onGround) {
+                    jumpPhase = 1;
+                }
+                stepsSinceLastJump = 0;
                 jumpPhase++;
                 jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
                 //float alignedVelocity = Vector2.Dot(velocity.normalized, contactNormal); // not completely sure about this
@@ -129,11 +133,6 @@ public class CharController : MonoBehaviour
                 }
 
                 
-            }
-
-            if (jumpPhase >= maxAirJumps)
-            {
-                JumpMaxed = true;
             }
         }
 
@@ -161,7 +160,7 @@ public class CharController : MonoBehaviour
 
         velocity.y = Mathf.MoveTowards(velocity.y, desiredGravityVelocity, maxGravityChange);
 
-        if (dashPhase < maxAirDash && desiredDash)
+        if (dashPhase < maxDash && desiredDash)
         {
             
             //Might need to separate concerns 
@@ -171,6 +170,7 @@ public class CharController : MonoBehaviour
 
             if (!Mathf.Approximately(dashDir.sqrMagnitude, 0f))
             {
+                stepsSinceLastDash = 0;
                 dashPhase++;
                 velocity.x = dashVelocity * dir.x;
                 velocity.y = dashVelocity * dir.y;
@@ -182,9 +182,39 @@ public class CharController : MonoBehaviour
 
         rb.velocity = velocity;
 
-        onGround = false;
+        ClearState();
     }
+    private void UpdateState()
+    {
+        velocity = rb.velocity;
+        stepsSinceLastJump++;
+        stepsSinceLastDash++;
+        
+        if (!onGround)
+        {
+            contactNormal = Vector2.up;
+            return;
+        }
 
+        contactNormal.Normalize();
+        if (stepsSinceLastJump > 1) {
+            jumpPhase = 0;
+            
+        }
+
+        if (stepsSinceLastDash > 1)
+        {
+            dashPhase = 0;
+        }
+
+        
+    }
+    void ClearState () 
+    {
+        onGround = false;
+        contactNormal = Vector2.zero;
+    }
+    
     private IEnumerator DashWait(Vector2 velocity)
     {
         isDashing = true;
@@ -206,21 +236,6 @@ public class CharController : MonoBehaviour
         }
 
         isDashing = false;
-    }
-
-    private void UpdateState()
-    {
-        velocity = rb.velocity;
-
-        if (!onGround)
-        {
-            contactNormal = Vector2.up;
-            return;
-        }
-        jumpPhase = 0;
-        dashPhase = 0;
-        //naturalUpwardVelocity = 0f;
-        JumpMaxed = false;
     }
 
     private void OnValidate()
@@ -247,7 +262,7 @@ public class CharController : MonoBehaviour
 
             if (!(normal.y >= minGroundDotProduct)) continue;
             onGround = true;
-            contactNormal = normal;
+            contactNormal += normal;
         }
     }
     
@@ -273,13 +288,16 @@ public class CharController : MonoBehaviour
 
         velocity += xAxis * (newX - currentX);
 
+        float slopeFactor = Mathf.Abs(Vector2.Angle(contactNormal, Vector2.up))/90f;
+        
+        
         if (velocity.y < -0.1 && onGround) // little hack to adjust speed on slopes
         {
-            velocity += velocity.normalized * 1.2f;
+            velocity += velocity.normalized * (slopeFactor * 2.4f);
         }
         else if (velocity.y > 0.1 && onGround)
         {
-            velocity -= velocity.normalized * 0.8f;
+            velocity -= velocity.normalized * (slopeFactor * 1.6f);
         }
 
     }
