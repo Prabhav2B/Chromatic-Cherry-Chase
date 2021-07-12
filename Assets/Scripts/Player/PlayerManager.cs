@@ -8,10 +8,14 @@ public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private Sprite playerCoreA;
     [SerializeField] private Sprite playerCoreB;
-    
+
     private static PlayerManager playerInstance;
-    public static PlayerManager PlayerInstance { get { return playerInstance; } }
-    
+
+    public static PlayerManager PlayerInstance
+    {
+        get { return playerInstance; }
+    }
+
     private SpriteRenderer spriteRenderer;
     private Transform spriteRendererTransform;
     private Rigidbody2D rb;
@@ -20,8 +24,8 @@ public class PlayerManager : MonoBehaviour
 
     protected Vector2 moveVector;
     public Vector2 PlayerInput { get; private set; }
-    
-    
+
+
     private void Awake()
     {
         playerInstance = this;
@@ -29,7 +33,7 @@ public class PlayerManager : MonoBehaviour
         rb = this.GetComponent<Rigidbody2D>();
         characterController = GetComponent<CharController>();
         timeBend = GetComponent<TimeBend>();
-        
+
         spriteRenderer = this.GetComponentInChildren<SpriteRenderer>();
         spriteRendererTransform = spriteRenderer.transform;
     }
@@ -41,13 +45,13 @@ public class PlayerManager : MonoBehaviour
         // PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         characterController.Move(PlayerInput);
     }
-    
+
     private void OnJump(InputValue input)
     {
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
         {
             characterController.JumpInitiate();
-            if(!characterController.JumpMaxed)
+            if (!characterController.JumpMaxed)
                 SquishStart();
         }
         else
@@ -55,7 +59,7 @@ public class PlayerManager : MonoBehaviour
             characterController.JumpEnd();
         }
     }
-    
+
     private void OnTimeBend(InputValue input)
     {
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
@@ -67,26 +71,26 @@ public class PlayerManager : MonoBehaviour
             timeBend.TimeBendEnd();
         }
     }
-    
+
     private void OnDash(InputValue input)
     {
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
         {
             characterController.DashInitiate();
             //if(!characterController.JumpMaxed)
-                //SquishStart();
+            //SquishStart();
         }
         else
         {
             characterController.DashEnd();
         }
     }
-    
+
     private void OnPowerA(InputValue input)
     {
         spriteRenderer.sprite = playerCoreA;
     }
-    
+
     private void OnPowerB(InputValue input)
     {
         spriteRenderer.sprite = playerCoreB;
@@ -114,14 +118,30 @@ public class PlayerManager : MonoBehaviour
 
     void SquishStart()
     {
-
         spriteRendererTransform.DOScale(new Vector3(.75f, 1.25f, 1.0f), .15f)
             .OnComplete(SquishRelease);
-
     }
 
     void SquishRelease()
     {
         spriteRendererTransform.DOScale(new Vector3(1f, 1f, 1.0f), .15f);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        var camTransition = other.GetComponent<CinemachineTransitionInfo>();
+        if (camTransition != null)
+        {
+            camTransition.OnEnterCameraTransition?.Invoke();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        var camTransition = other.GetComponent<CinemachineTransitionInfo>(); //repetition
+        if (camTransition != null)
+        {
+            camTransition.OnExitCameraTransition?.Invoke();
+        }
     }
 }
