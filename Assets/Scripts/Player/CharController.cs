@@ -225,7 +225,7 @@ public class CharController : MonoBehaviour
         
         if (onSteep && initateWallJumpCounter)
         {
-            velocity.x = (steepNormal.normalized).x * 5f; //remove .normalized for reeeeeee
+            velocity.x = (steepNormal.normalized).x * 8f; //remove .normalized for reeeeeee
             velocity.y = 7f;
             if (!Mathf.Approximately(moveVal, 0f))
             {

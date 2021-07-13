@@ -7,8 +7,10 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private Sprite playerCoreA;
+    [SerializeField] private Sprite playerCoreABlock;
     [SerializeField] private Sprite playerCoreAJumpIndicator;
     [SerializeField] private Sprite playerCoreB;
+    [SerializeField] private Sprite playerCoreBBlock;
     [SerializeField] private Sprite playerCoreBJumpIndicator;
 
     private static PlayerManager playerInstance;
@@ -24,9 +26,11 @@ public class PlayerManager : MonoBehaviour
     private Rigidbody2D rb;
     private CharController characterController;
     private TimeBend timeBend;
+    private bool powerActive;
 
     protected Vector2 moveVector;
     public Vector2 PlayerInput { get; private set; }
+    public bool PowerActive => powerActive;
 
 
     private void Awake()
@@ -92,12 +96,15 @@ public class PlayerManager : MonoBehaviour
 
     private void OnPowerA(InputValue input)
     {
-        characterSpriteRenderer.sprite = playerCoreA;
-    }
-
-    private void OnPowerB(InputValue input)
-    {
-        characterSpriteRenderer.sprite = playerCoreB;
+        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        {
+            powerActive = true;
+        }
+        else
+        {
+            powerActive = false;
+        }
+        CheckForSpriteUpdates();
     }
 
     void Update()
@@ -119,15 +126,19 @@ public class PlayerManager : MonoBehaviour
             spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
         }
 
+        CheckForSpriteUpdates();
+    }
+
+    private void CheckForSpriteUpdates()
+    {
         if (characterController.DashMaxed)
         {
-            characterSpriteRenderer.sprite = playerCoreB;
+            characterSpriteRenderer.sprite = !powerActive?playerCoreB:playerCoreBBlock;
             jumpIndicatorSpriteRenderer.sprite = playerCoreBJumpIndicator;
-
         }
-        else if(!characterController.DashMaxed)
+        else if (!characterController.DashMaxed)
         {
-            characterSpriteRenderer.sprite = playerCoreA;
+            characterSpriteRenderer.sprite = !powerActive?playerCoreA:playerCoreABlock;
             jumpIndicatorSpriteRenderer.sprite = playerCoreAJumpIndicator;
         }
 
