@@ -37,6 +37,7 @@ public class CharController : MonoBehaviour
     private float desiredMovementVelocity;
     private float desiredGravityVelocity;
     private float jumpVelocity;
+    private Vector2 externalVelocity;
     private bool desiredJump;
     private bool desiredDash;
     private bool isDashing;
@@ -57,6 +58,11 @@ public class CharController : MonoBehaviour
     public bool DashMaxed => dashPhase >= maxDash;
 
     public float MaxSpeed => maxSpeed;
+
+    public Vector2 ExternalVelocity
+    {
+        set => externalVelocity = value;
+    }
 
     private void Awake()
     {
@@ -132,7 +138,7 @@ public class CharController : MonoBehaviour
             fastFall = false;
         }
 
-        if(!isWallJump)
+        if (!isWallJump)
             AdjustVelocity();
 
         float maxGravityChange;
@@ -171,6 +177,10 @@ public class CharController : MonoBehaviour
                 return;
             }
         }
+
+        velocity = velocity + externalVelocity;
+        velocity.x = Mathf.Min(velocity.x, 30f);
+        velocity.y = Mathf.Min(velocity.y, 30f);
 
         rb.velocity = velocity;
 
@@ -222,7 +232,7 @@ public class CharController : MonoBehaviour
     private void Jump()
     {
         stepsSinceLastJump = 0;
-        
+
         if (onSteep && initateWallJumpCounter)
         {
             velocity.x = (steepNormal.normalized).x * 8f; //remove .normalized for reeeeeee
@@ -232,14 +242,15 @@ public class CharController : MonoBehaviour
                 StopAllCoroutines();
                 StartCoroutine(WallJumpWait(velocity));
             }
+
             return;
         }
-        
+
         if (jumpPhase == 0 && !onGround)
         {
             jumpPhase = 1;
         }
-        
+
         jumpPhase++;
         jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
         //float alignedVelocity = Vector2.Dot(velocity.normalized, contactNormal); // not completely sure about this
@@ -252,14 +263,21 @@ public class CharController : MonoBehaviour
         {
             velocity.y = (jumpVelocity + 1.5f);
         }
-
-        
     }
 
     void ClearState()
     {
         onGround = onSteep = false;
         contactNormal = steepNormal = Vector2.zero;
+    }
+
+    public void ClampVelocity()
+    {
+        velocity = rb.velocity;
+        velocity.x = Mathf.Min(velocity.x, 10f);
+        velocity.y = Mathf.Min(velocity.y, 10f);
+
+        rb.velocity = velocity;
     }
 
     private IEnumerator DashWait(Vector2 velocity)

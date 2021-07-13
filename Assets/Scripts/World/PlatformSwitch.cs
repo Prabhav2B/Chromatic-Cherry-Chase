@@ -28,7 +28,7 @@ public class PlatformSwitch : MonoBehaviour
     {
         foreach (var sprite in platformSprites)
         {
-            sprite.color = b0 ? Color.blue : new Color(1f, 0f, 0f, .5f);
+            sprite.color = b0 ? new Color(0.32f, 0.77f, 0.98f, 0.8f) : new Color(0.98f, 0.32f, 0.32f, 0.8f);
         }
 
         myCollider.enabled = b0;

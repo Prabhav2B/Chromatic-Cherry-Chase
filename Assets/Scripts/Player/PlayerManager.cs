@@ -180,4 +180,14 @@ public class PlayerManager : MonoBehaviour
             camTransition.OnExitCameraTransition?.Invoke();
         }
     }
+
+    public void SetExternalVelocity(Vector2 externalVelocity)
+    {
+        characterController.ExternalVelocity = externalVelocity;
+    }
+
+    public void GyserExit()
+    {
+        characterController.ClampVelocity();
+    }
 }
