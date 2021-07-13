@@ -277,6 +277,17 @@
                 },
                 {
                     "name": "",
+                    "id": "5d83dfb5-6552-4d8b-ab2b-a4c42d1055bc",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PowerA",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "48c534c7-0fa4-4956-9c0f-b939bd351aff",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",

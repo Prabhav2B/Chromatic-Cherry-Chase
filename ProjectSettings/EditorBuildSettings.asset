@@ -47,7 +47,10 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ShieldAndShoot.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/PlayGround.unity
+    guid: 0ab13427d8c27204e8a66753723a4730
   m_configObjects: {}
