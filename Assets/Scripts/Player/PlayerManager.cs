@@ -7,7 +7,9 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField] private Sprite playerCoreA;
+    [SerializeField] private Sprite playerCoreAJumpIndicator;
     [SerializeField] private Sprite playerCoreB;
+    [SerializeField] private Sprite playerCoreBJumpIndicator;
 
     private static PlayerManager playerInstance;
 
@@ -16,7 +18,8 @@ public class PlayerManager : MonoBehaviour
         get { return playerInstance; }
     }
 
-    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer characterSpriteRenderer;
+    private SpriteRenderer jumpIndicatorSpriteRenderer;
     private Transform spriteRendererTransform;
     private Rigidbody2D rb;
     private CharController characterController;
@@ -34,8 +37,9 @@ public class PlayerManager : MonoBehaviour
         characterController = GetComponent<CharController>();
         timeBend = GetComponent<TimeBend>();
 
-        spriteRenderer = this.GetComponentInChildren<SpriteRenderer>();
-        spriteRendererTransform = spriteRenderer.transform;
+        characterSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[0];
+        jumpIndicatorSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[1];
+        spriteRendererTransform = characterSpriteRenderer.transform;
     }
 
     private void OnMove(InputValue input)
@@ -88,12 +92,12 @@ public class PlayerManager : MonoBehaviour
 
     private void OnPowerA(InputValue input)
     {
-        spriteRenderer.sprite = playerCoreA;
+        characterSpriteRenderer.sprite = playerCoreA;
     }
 
     private void OnPowerB(InputValue input)
     {
-        spriteRenderer.sprite = playerCoreB;
+        characterSpriteRenderer.sprite = playerCoreB;
     }
 
     void Update()
@@ -102,17 +106,38 @@ public class PlayerManager : MonoBehaviour
         {
             //turn into a tweener?
             spriteRendererTransform.DOLocalRotate(Vector3.forward * -5f, 1.0f);
-            spriteRenderer.flipX = false;
+            characterSpriteRenderer.flipX = false;
         }
         else if (rb.velocity.x < characterController.MaxSpeed * -0.75f)
         {
             //turn into a tweener?
             spriteRendererTransform.DOLocalRotate(Vector3.forward * 5f, 1.0f);
-            spriteRenderer.flipX = true;
+            characterSpriteRenderer.flipX = true;
         }
         else
         {
             spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
+        }
+
+        if (characterController.DashMaxed)
+        {
+            characterSpriteRenderer.sprite = playerCoreB;
+            jumpIndicatorSpriteRenderer.sprite = playerCoreBJumpIndicator;
+
+        }
+        else if(!characterController.DashMaxed)
+        {
+            characterSpriteRenderer.sprite = playerCoreA;
+            jumpIndicatorSpriteRenderer.sprite = playerCoreAJumpIndicator;
+        }
+
+        if (characterController.JumpMaxed)
+        {
+            jumpIndicatorSpriteRenderer.DOFade(0f, 0.2f);
+        }
+        else
+        {
+            jumpIndicatorSpriteRenderer.DOFade(255f, 0.2f);
         }
     }
 

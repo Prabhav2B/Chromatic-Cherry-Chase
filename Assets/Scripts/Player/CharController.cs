@@ -54,6 +54,8 @@ public class CharController : MonoBehaviour
 
     public bool JumpMaxed => (jumpPhase > maxAirJumps || (!onGround && maxAirJumps == 0));
 
+    public bool DashMaxed => dashPhase >= maxDash;
+
     public float MaxSpeed => maxSpeed;
 
     private void Awake()
