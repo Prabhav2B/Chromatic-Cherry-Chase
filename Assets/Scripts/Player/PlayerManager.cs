@@ -109,21 +109,21 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        if (rb.velocity.x > characterController.MaxSpeed * 0.75f)
+        if(characterController.IsStill)
+        {
+            spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
+        }
+        else if (characterController.FacingRight)
         {
             //turn into a tweener?
             spriteRendererTransform.DOLocalRotate(Vector3.forward * -5f, 1.0f);
             characterSpriteRenderer.flipX = false;
         }
-        else if (rb.velocity.x < characterController.MaxSpeed * -0.75f)
+        else
         {
             //turn into a tweener?
             spriteRendererTransform.DOLocalRotate(Vector3.forward * 5f, 1.0f);
             characterSpriteRenderer.flipX = true;
-        }
-        else
-        {
-            spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
         }
 
         CheckForSpriteUpdates();

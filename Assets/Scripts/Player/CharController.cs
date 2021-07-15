@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using DG.Tweening;
-using System;
 using Cinemachine;
 using UnityEngine.Serialization;
 
@@ -15,89 +11,73 @@ public class CharController : MonoBehaviour
     [SerializeField, Range(-50f, 50f)] private float maxGravityAcceleration = -9.8f;
     [SerializeField, Range(0f, 10f)] private float jumpHeight = 5.0f;
     [SerializeField, Range(0f, 100f)] private float dashVelocity = 10f;
-
-    [FormerlySerializedAs("discount")] [SerializeField, Range(0f, 1f)]
-    private float dashVelocityDiscount = 0.95f;
-
+    [SerializeField, Range(0f, 1f)] private float dashVelocityDiscount = 0.95f;
     [SerializeField, Range(0, 5)] private int maxAirJumps = 1;
+    [SerializeField, Range(0, 5)] private int maxDash = 1;
+    [SerializeField] private bool fastFallActive;
 
-    [FormerlySerializedAs("maxAirDash")] [SerializeField, Range(0, 5)]
-    private int maxDash = 1;
-
-
-    [SerializeField] private bool fastFallActive = false;
-
-    private Rigidbody2D rb;
-    private Vector2 velocity;
-    private Vector2 displacement;
-    private Vector2 acceleration;
-    private Vector2 dashDir;
-    private Vector2 contactNormal, steepNormal;
-    private float moveVal;
-    private float desiredMovementVelocity;
-    private float desiredGravityVelocity;
-    private float jumpVelocity;
-    private Vector2 externalVelocity;
-    private bool desiredJump;
-    private bool desiredDash;
-    private bool isDashing;
-    private bool isWallJump;
-    private bool jumpReleased; //-> currently unused;
-    private bool onGround;
-    private bool onSteep;
-    private bool fastFall;
-    private bool initateWallJumpCounter;
-    private int jumpPhase;
-    private int dashPhase;
-    private int stepsSinceLastJump, stepsSinceLastDash, stepsSinceWallContact;
-    private float minGroundDotProduct;
+    private Rigidbody2D _rb;
+    private Vector2 _velocity, _externalVelocity;
+    private Vector2 _dashDir;
+    private Vector2 _contactNormal, _steepNormal;
+    private float _moveVal;
+    private float _desiredMovementVelocity, _desiredGravityVelocity;
+    private float _jumpVelocity;
+    private bool _desiredJump, _desiredDash;
+    private bool _isDashing, _isWallJump;
+    private bool _onGround, _onSteep;
+    private bool _fastFall;
+    private bool _initateWallJumpCounter;
+    private bool _facingRight, _isStill;
+    private int _jumpPhase, _dashPhase;
+    private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceWallContact;
+    private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
 
-    public bool JumpMaxed => (jumpPhase > maxAirJumps || (!onGround && maxAirJumps == 0));
+    public bool JumpMaxed => (_jumpPhase > maxAirJumps || (!_onGround && maxAirJumps == 0));
 
-    public bool DashMaxed => dashPhase >= maxDash;
+    public bool DashMaxed => _dashPhase >= maxDash;
 
-    public float MaxSpeed => maxSpeed;
+    public bool IsStill => _isStill;
+
+    public bool FacingRight => _facingRight;
 
     public Vector2 ExternalVelocity
     {
-        set => externalVelocity = value;
+        set => _externalVelocity = value;
     }
 
     private void Awake()
     {
-        rb = this.GetComponent<Rigidbody2D>();
+        _rb = this.GetComponent<Rigidbody2D>();
         OnValidate();
     }
 
     private void Start()
     {
         _impulseSource = FindObjectOfType<CinemachineImpulseSource>();
-
-        //jumpReleased = true;
+        _facingRight = true;
     }
 
     public void Move(Vector2 moveVector)
     {
-        dashDir = moveVector;
-        this.moveVal = Mathf.Round(moveVector.x); // Lock this while wall jumping
+        _dashDir = moveVector;
+        this._moveVal = Mathf.Round(moveVector.x); // Lock this while wall jumping
     }
 
     public void JumpInitiate()
     {
-        //jumpReleased = false;
-        desiredJump = true;
+        _desiredJump = true;
     }
 
     public void JumpEnd()
     {
-        //jumpReleased = true;
-        fastFall = true;
+        _fastFall = true;
     }
 
     public void DashInitiate()
     {
-        desiredDash = true;
+        _desiredDash = true;
     }
 
     public void DashEnd()
@@ -108,42 +88,67 @@ public class CharController : MonoBehaviour
 
     private void Update()
     {
-        desiredMovementVelocity = moveVal * maxSpeed;
-        desiredGravityVelocity = -maxGravitySpeed;
+        _isStill = false;
+        _desiredMovementVelocity = _moveVal * maxSpeed;
+        _desiredGravityVelocity = -maxGravitySpeed;
+
+        if (_velocity.x > maxSpeed * 0.75f)
+        {
+            _facingRight = true;
+        }
+        else if (_rb.velocity.x < maxSpeed * -0.75f)
+        {
+            _facingRight = false;
+        }
+        else
+        {
+            _isStill = true;
+        }
     }
 
     private void FixedUpdate()
     {
-        if (isDashing)
+        if (_isDashing)
             return;
 
         UpdateState();
 
-        if (desiredJump && !isWallJump)
+        if (_dashPhase < maxDash && _desiredDash)
         {
-            desiredJump = false;
+            //Might need to separate concerns 
+            _desiredDash = false;
 
-            if (maxAirJumps > 0 && jumpPhase > maxAirJumps && !onSteep)
+            _stepsSinceLastDash = 0;
+            _dashPhase++;
+            StopAllCoroutines();
+            StartCoroutine(Dash());
+            return;
+        }
+
+        if (_desiredJump && !_isWallJump)
+        {
+            _desiredJump = false;
+
+            if (maxAirJumps > 0 && _jumpPhase > maxAirJumps && !_onSteep)
                 return;
 
             Jump();
         }
 
-
-        if (fastFall && fastFallActive)
+        if (_fastFall && fastFallActive)
         {
-            if (velocity.y >= jumpVelocity / 3f)
-                velocity.y += (-1f * jumpVelocity) / 4f;
+            if (_velocity.y >= _jumpVelocity / 3f)
+                _velocity.y += (-1f * _jumpVelocity) / 4f;
 
-            fastFall = false;
+            _fastFall = false;
         }
 
-        if (!isWallJump)
+        if (!_isWallJump)
             AdjustVelocity();
 
         float maxGravityChange;
 
-        if (!onGround && velocity.y < 0f)
+        if (!_onGround && _velocity.y < 0f)
         {
             maxGravityChange = -maxGravityAcceleration * Time.fixedDeltaTime * 1.5f;
         }
@@ -152,143 +157,134 @@ public class CharController : MonoBehaviour
             maxGravityChange = -maxGravityAcceleration * Time.fixedDeltaTime;
         }
 
-        if (onSteep)
+        if (_onSteep)
         {
-            desiredGravityVelocity /= 2f;
+            _desiredGravityVelocity /= 2f;
         }
 
-        velocity.y = Mathf.MoveTowards(velocity.y, desiredGravityVelocity, maxGravityChange);
+        _velocity.y = Mathf.MoveTowards(_velocity.y, _desiredGravityVelocity, maxGravityChange);
 
-        if (dashPhase < maxDash && desiredDash)
-        {
-            //Might need to separate concerns 
-            desiredDash = false;
-            Vector2 dir = dashDir.normalized;
+        _velocity = _velocity + _externalVelocity;
+        _velocity.x = Mathf.Min(_velocity.x, 30f);
+        _velocity.y = Mathf.Min(_velocity.y, 30f);
 
-
-            if (!Mathf.Approximately(dashDir.sqrMagnitude, 0f))
-            {
-                stepsSinceLastDash = 0;
-                dashPhase++;
-                velocity.x = dashVelocity * dir.x;
-                velocity.y = dashVelocity * dir.y;
-                StopAllCoroutines();
-                StartCoroutine(DashWait(velocity));
-                return;
-            }
-        }
-
-        velocity = velocity + externalVelocity;
-        velocity.x = Mathf.Min(velocity.x, 30f);
-        velocity.y = Mathf.Min(velocity.y, 30f);
-
-        rb.velocity = velocity;
+        _rb.velocity = _velocity;
 
         ClearState();
     }
 
     private void UpdateState()
     {
-        velocity = rb.velocity;
-        stepsSinceLastJump++;
-        stepsSinceLastDash++;
+        _velocity = _rb.velocity;
+        _stepsSinceLastJump++;
+        _stepsSinceLastDash++;
 
-        if (initateWallJumpCounter)
+        if (_initateWallJumpCounter)
         {
-            stepsSinceWallContact++;
+            _stepsSinceWallContact++;
         }
 
-        if (onSteep)
+        if (_onSteep)
         {
-            initateWallJumpCounter = true;
-            stepsSinceWallContact = 0;
+            _initateWallJumpCounter = true;
+            _stepsSinceWallContact = 0;
         }
 
-        if (onGround)
+        if (_onGround)
         {
-            initateWallJumpCounter = false;
+            _initateWallJumpCounter = false;
         }
 
-        if (!onGround)
+        if (!_onGround)
         {
-            contactNormal = Vector2.up;
+            _contactNormal = Vector2.up;
             return;
         }
 
-        contactNormal.Normalize();
-        steepNormal.Normalize();
+        _contactNormal.Normalize();
+        _steepNormal.Normalize();
 
-        if (stepsSinceLastJump > 1)
+        if (_stepsSinceLastJump > 1)
         {
-            jumpPhase = 0;
+            _jumpPhase = 0;
         }
 
-        if (stepsSinceLastDash > 1)
+        if (_stepsSinceLastDash > 1)
         {
-            dashPhase = 0;
+            _dashPhase = 0;
         }
     }
 
     private void Jump()
     {
-        stepsSinceLastJump = 0;
+        _stepsSinceLastJump = 0;
 
-        if (onSteep && initateWallJumpCounter)
+        if (_onSteep && _initateWallJumpCounter)
         {
-            velocity.x = (steepNormal.normalized).x * 8f; //remove .normalized for reeeeeee
-            velocity.y = 7f;
-            if (!Mathf.Approximately(moveVal, 0f))
+            _velocity.x = (_steepNormal.normalized).x * 9f; //remove .normalized for reeeeeee
+            _velocity.y = 5.25f;
+            if (!Mathf.Approximately(_moveVal, 0f))
             {
                 StopAllCoroutines();
-                StartCoroutine(WallJumpWait(velocity));
+                StartCoroutine(WallJumpWait(_velocity));
             }
 
             return;
         }
 
-        if (jumpPhase == 0 && !onGround)
+        if (_jumpPhase == 0 && !_onGround)
         {
-            jumpPhase = 1;
+            _jumpPhase = 1;
         }
 
-        jumpPhase++;
-        jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
+        _jumpPhase++;
+        _jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
         //float alignedVelocity = Vector2.Dot(velocity.normalized, contactNormal); // not completely sure about this
 
-        if (!Mathf.Approximately(contactNormal.y, 1f) && velocity.y > 0) //check if on a upward slope
+        if (!Mathf.Approximately(_contactNormal.y, 1f) && _velocity.y > 0) //check if on a upward slope
         {
-            velocity.y += ((jumpVelocity));
+            _velocity.y += ((_jumpVelocity));
         }
         else
         {
-            velocity.y = (jumpVelocity + 1.5f);
+            _velocity.y = (_jumpVelocity + 1.5f);
         }
     }
 
     void ClearState()
     {
-        onGround = onSteep = false;
-        contactNormal = steepNormal = Vector2.zero;
+        _onGround = _onSteep = _desiredDash = false;
+        _contactNormal = _steepNormal = Vector2.zero;
     }
 
     public void ClampVelocity()
     {
-        velocity = rb.velocity;
-        velocity.x = Mathf.Min(velocity.x, 10f);
-        velocity.y = Mathf.Min(velocity.y, 10f);
+        _velocity = _rb.velocity;
+        _velocity.x = Mathf.Min(_velocity.x, 10f);
+        _velocity.y = Mathf.Min(_velocity.y, 10f);
 
-        rb.velocity = velocity;
+        _rb.velocity = _velocity;
     }
 
-    private IEnumerator DashWait(Vector2 velocity)
+    private IEnumerator Dash()
     {
-        isDashing = true;
-        rb.velocity = Vector2.zero;
+        _isDashing = true;
+        
+        if (Mathf.Approximately(_dashDir.sqrMagnitude, 0f)) //needs to be recorded before setting velocity to zero
+        {
+            _dashDir = _facingRight ? Vector2.right : Vector2.left;
+        }
+        _dashDir.Normalize();
+        
+        _rb.velocity = Vector2.zero;
         yield return new WaitForSeconds(.05f);
 
         _impulseSource.GenerateImpulse();
         float timeElapsed = 0.0f;
-        Vector2 dashVel = velocity;
+
+        Vector2 dashVel;
+        dashVel.x = dashVelocity * _dashDir.x;
+        dashVel.y = dashVelocity * _dashDir.y;
 
         while (true)
         {
@@ -296,36 +292,36 @@ public class CharController : MonoBehaviour
                 break;
             yield return new WaitForFixedUpdate();
             timeElapsed += Time.fixedDeltaTime;
-            rb.velocity = dashVel * dashVelocityDiscount;
-            dashVel = rb.velocity;
+            _rb.velocity = dashVel * dashVelocityDiscount;
+            dashVel = _rb.velocity;
         }
 
-        isDashing = false;
+        _isDashing = false;
     }
 
     private IEnumerator WallJumpWait(Vector2 velocity)
     {
-        isWallJump = true;
-        rb.velocity = Vector2.zero;
+        _isWallJump = true;
+        _rb.velocity = Vector2.zero;
 
         float timeElapsed = 0.0f;
         Vector2 wallJumpVel = velocity;
 
         while (true)
         {
-            if (timeElapsed >= 0.15f)
+            if (timeElapsed >= 0.175f)
                 break;
             yield return new WaitForFixedUpdate();
             timeElapsed += Time.fixedDeltaTime;
-            rb.velocity = wallJumpVel;
+            _rb.velocity = wallJumpVel;
         }
 
-        isWallJump = false;
+        _isWallJump = false;
     }
 
     private void OnValidate()
     {
-        minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
+        _minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -345,21 +341,21 @@ public class CharController : MonoBehaviour
             Vector2 normal = collision.contacts[i].normal;
 
 
-            if ((normal.y >= minGroundDotProduct))
+            if ((normal.y >= _minGroundDotProduct))
             {
-                onGround = true;
-                contactNormal += normal;
+                _onGround = true;
+                _contactNormal += normal;
             }
             else if (normal.y > -0.01f)
             {
-                onSteep = true;
-                steepNormal += normal;
+                _onSteep = true;
+                _steepNormal += normal;
             }
         }
 
-        if (onGround && onSteep) // a hack
+        if (_onGround && _onSteep) // a hack
         {
-            onSteep = false;
+            _onSteep = false;
         }
     }
 
@@ -373,30 +369,30 @@ public class CharController : MonoBehaviour
     {
         Vector2 xAxis = ProjectOnContactPlane(Vector2.right).normalized;
 
-        float currentX = Vector2.Dot(velocity, xAxis);
+        float currentX = Vector2.Dot(_velocity, xAxis);
 
 
-        float acceleration = onGround ? maxAcceleration : maxAirAcceleration;
+        float acceleration = _onGround ? maxAcceleration : maxAirAcceleration;
         float maxSpeedChange = acceleration * Time.fixedDeltaTime;
 
-        if (Mathf.Approximately(desiredMovementVelocity, 0f) &&
-            !onGround) //come to stop fast when control is released mid air
+        if (Mathf.Approximately(_desiredMovementVelocity, 0f) &&
+            !_onGround) //come to stop fast when control is released mid air
             maxSpeedChange = maxAcceleration * Time.fixedDeltaTime;
 
-        float newX = Mathf.MoveTowards(currentX, desiredMovementVelocity, maxSpeedChange);
+        float newX = Mathf.MoveTowards(currentX, _desiredMovementVelocity, maxSpeedChange);
 
-        velocity += xAxis * (newX - currentX);
+        _velocity += xAxis * (newX - currentX);
 
-        float slopeFactor = Mathf.Abs(Vector2.Angle(contactNormal, Vector2.up)) / 90f;
+        float slopeFactor = Mathf.Abs(Vector2.Angle(_contactNormal, Vector2.up)) / 90f;
 
 
-        if (velocity.y < -0.1 && onGround) // little hack to adjust speed on slopes
+        if (_velocity.y < -0.1 && _onGround) // little hack to adjust speed on slopes
         {
-            velocity += velocity.normalized * (slopeFactor * 2.4f);
+            _velocity += _velocity.normalized * (slopeFactor * 1.5f);
         }
-        else if (velocity.y > 0.1 && onGround)
+        else if (_velocity.y > 0.1 && _onGround)
         {
-            velocity -= velocity.normalized * (slopeFactor * 1.6f);
+            _velocity -= _velocity.normalized * slopeFactor;
         }
     }
 }
