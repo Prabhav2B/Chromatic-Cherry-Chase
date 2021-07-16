@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Cinemachine;
@@ -219,7 +220,8 @@ public class CharController : MonoBehaviour
     private void Jump()
     {
         _stepsSinceLastJump = 0;
-
+        _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
+        Debug.Log(_steepProximity);
         if ((_onSteep || _steepProximity) && _initateWallJumpCounter)
         {
             _velocity.x = (_steepNormal.normalized).x * 16.5f; //remove .normalized for reeeeeee
@@ -251,30 +253,30 @@ public class CharController : MonoBehaviour
         }
     }
 
+    private bool CheckForSteepProximity()
+    {
+        RaycastHit2D hitinfo = Physics2D.Raycast(this.transform.position, Vector2.right, .55f);
+        if (hitinfo.collider != null)
+        {
+            _steepNormal = hitinfo.normal;
+            return true;
+        }
+
+        hitinfo = Physics2D.Raycast(this.transform.position, Vector2.left, .55f);
+        if (hitinfo.collider != null)
+        {
+            _steepNormal = hitinfo.normal;
+            return true;
+        }
+
+        return false;
+    }
+
     void ClearState()
     {
         _onGround = _onSteep = _desiredDash = false;
         _contactNormal = _steepNormal = Vector2.zero;
     }
-
-    // private void WallJump(Vector2 velocity) //Make this not a coroutine
-    // {
-    //     _isWallJump = true;
-    //     _rb.velocity = Vector2.zero;
-    //
-    //     float timeElapsed = 0.0f;
-    //     Vector2 wallJumpVel = velocity;
-    //
-    //     while (true)
-    //     {
-    //         if (timeElapsed >= 0.175f)
-    //             break;
-    //         timeElapsed += Time.fixedDeltaTime;
-    //         
-    //     }
-    //
-    //     _isWallJump = false;
-    // }
 
     public void ClampVelocity()
     {
