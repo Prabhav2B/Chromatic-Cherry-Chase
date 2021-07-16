@@ -129,7 +129,7 @@ public class CharController : MonoBehaviour
         {
             _desiredJump = false;
 
-            if (maxAirJumps > 0 && _jumpPhase > maxAirJumps && !_onSteep)
+            if (_jumpPhase > maxAirJumps && !_onSteep)
                 return;
 
             Jump();
@@ -268,6 +268,7 @@ public class CharController : MonoBehaviour
 
     private IEnumerator Dash()
     {
+        _isWallJump = false;
         _isDashing = true;
         
         if (Mathf.Approximately(_dashDir.sqrMagnitude, 0f)) //needs to be recorded before setting velocity to zero
@@ -299,7 +300,7 @@ public class CharController : MonoBehaviour
         _isDashing = false;
     }
 
-    private IEnumerator WallJumpWait(Vector2 velocity)
+    private IEnumerator WallJumpWait(Vector2 velocity) //Make this not a coroutine
     {
         _isWallJump = true;
         _rb.velocity = Vector2.zero;
