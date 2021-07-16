@@ -24,8 +24,9 @@ public class CharController : MonoBehaviour
     private float _desiredMovementVelocity, _desiredGravityVelocity;
     private float _jumpVelocity;
     private bool _desiredJump, _desiredDash;
-    private bool _isDashing, _isWallJump;
+    private bool _isDashing;
     private bool _onGround, _onSteep;
+    private bool _steepProximity;
     private bool _fastFall;
     private bool _initateWallJumpCounter;
     private bool _facingRight, _isStill;
@@ -125,7 +126,7 @@ public class CharController : MonoBehaviour
             return;
         }
 
-        if (_desiredJump && !_isWallJump)
+        if (_desiredJump)
         {
             _desiredJump = false;
 
@@ -143,8 +144,8 @@ public class CharController : MonoBehaviour
             _fastFall = false;
         }
 
-        if (!_isWallJump)
-            AdjustVelocity();
+
+        AdjustVelocity();
 
         float maxGravityChange;
 
@@ -219,14 +220,13 @@ public class CharController : MonoBehaviour
     {
         _stepsSinceLastJump = 0;
 
-        if (_onSteep && _initateWallJumpCounter)
+        if ((_onSteep || _steepProximity) && _initateWallJumpCounter)
         {
-            _velocity.x = (_steepNormal.normalized).x * 9f; //remove .normalized for reeeeeee
-            _velocity.y = 5.25f;
+            _velocity.x = (_steepNormal.normalized).x * 16.5f; //remove .normalized for reeeeeee
+            _velocity.y = 8.5f;
             if (!Mathf.Approximately(_moveVal, 0f))
             {
-                StopAllCoroutines();
-                StartCoroutine(WallJumpWait(_velocity));
+                _rb.velocity = _velocity;
             }
 
             return;
@@ -257,6 +257,25 @@ public class CharController : MonoBehaviour
         _contactNormal = _steepNormal = Vector2.zero;
     }
 
+    // private void WallJump(Vector2 velocity) //Make this not a coroutine
+    // {
+    //     _isWallJump = true;
+    //     _rb.velocity = Vector2.zero;
+    //
+    //     float timeElapsed = 0.0f;
+    //     Vector2 wallJumpVel = velocity;
+    //
+    //     while (true)
+    //     {
+    //         if (timeElapsed >= 0.175f)
+    //             break;
+    //         timeElapsed += Time.fixedDeltaTime;
+    //         
+    //     }
+    //
+    //     _isWallJump = false;
+    // }
+
     public void ClampVelocity()
     {
         _velocity = _rb.velocity;
@@ -268,15 +287,15 @@ public class CharController : MonoBehaviour
 
     private IEnumerator Dash()
     {
-        _isWallJump = false;
         _isDashing = true;
-        
+
         if (Mathf.Approximately(_dashDir.sqrMagnitude, 0f)) //needs to be recorded before setting velocity to zero
         {
             _dashDir = _facingRight ? Vector2.right : Vector2.left;
         }
+
         _dashDir.Normalize();
-        
+
         _rb.velocity = Vector2.zero;
         yield return new WaitForSeconds(.05f);
 
@@ -298,26 +317,6 @@ public class CharController : MonoBehaviour
         }
 
         _isDashing = false;
-    }
-
-    private IEnumerator WallJumpWait(Vector2 velocity) //Make this not a coroutine
-    {
-        _isWallJump = true;
-        _rb.velocity = Vector2.zero;
-
-        float timeElapsed = 0.0f;
-        Vector2 wallJumpVel = velocity;
-
-        while (true)
-        {
-            if (timeElapsed >= 0.175f)
-                break;
-            yield return new WaitForFixedUpdate();
-            timeElapsed += Time.fixedDeltaTime;
-            _rb.velocity = wallJumpVel;
-        }
-
-        _isWallJump = false;
     }
 
     private void OnValidate()
