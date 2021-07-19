@@ -25,23 +25,20 @@ public class CharController : MonoBehaviour
     private float _desiredMovementVelocity, _desiredGravityVelocity;
     private float _jumpVelocity;
     private bool _desiredJump, _desiredDash;
+    private bool _jumpBuffer;
     private bool _isDashing;
     private bool _onGround, _onSteep;
     private bool _steepProximity;
     private bool _fastFall;
-    private bool _initateWallJumpCounter;
     private bool _facingRight, _isStill;
     private int _jumpPhase, _dashPhase;
-    private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceWallContact;
+    private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer;
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
 
     public bool JumpMaxed => (_jumpPhase > maxAirJumps || (!_onGround && maxAirJumps == 0));
-
     public bool DashMaxed => _dashPhase >= maxDash;
-
     public bool IsStill => _isStill;
-
     public bool FacingRight => _facingRight;
 
     public Vector2 ExternalVelocity
@@ -127,14 +124,24 @@ public class CharController : MonoBehaviour
             return;
         }
 
-        if (_desiredJump)
+        if (_desiredJump || _jumpBuffer)
         {
             _desiredJump = false;
 
             if (_jumpPhase > maxAirJumps && !_onSteep)
-                return;
+            {
+                if (!_jumpBuffer)
+                {
+                    _jumpBuffer = true;
+                    _stepsSinceJumpBuffer = 0;
+                }
+            }
+            else
+            {
+                ResetJumpBuffer();
+                Jump();
+            }
 
-            Jump();
         }
 
         if (_fastFall && fastFallActive)
@@ -180,22 +187,7 @@ public class CharController : MonoBehaviour
         _velocity = _rb.velocity;
         _stepsSinceLastJump++;
         _stepsSinceLastDash++;
-
-        if (_initateWallJumpCounter)
-        {
-            _stepsSinceWallContact++;
-        }
-
-        if (_onSteep)
-        {
-            _initateWallJumpCounter = true;
-            _stepsSinceWallContact = 0;
-        }
-
-        if (_onGround)
-        {
-            _initateWallJumpCounter = false;
-        }
+        _stepsSinceJumpBuffer++;
 
         if (!_onGround)
         {
@@ -215,22 +207,27 @@ public class CharController : MonoBehaviour
         {
             _dashPhase = 0;
         }
+
+        if (_stepsSinceJumpBuffer > 10)
+        {
+            ResetJumpBuffer();
+        }
+    }
+
+    private void ResetJumpBuffer()
+    {
+        _stepsSinceJumpBuffer = 0;
+        _jumpBuffer = false;
     }
 
     private void Jump()
     {
         _stepsSinceLastJump = 0;
         _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
-        Debug.Log(_steepProximity);
-        if ((_onSteep || _steepProximity) && _initateWallJumpCounter)
-        {
-            _velocity.x = (_steepNormal.normalized).x * 16.5f; //remove .normalized for reeeeeee
-            _velocity.y = 8.5f;
-            if (!Mathf.Approximately(_moveVal, 0f))
-            {
-                _rb.velocity = _velocity;
-            }
 
+        if (_onSteep || _steepProximity) //Wall Jump
+        {
+            WallJump();
             return;
         }
 
@@ -250,6 +247,16 @@ public class CharController : MonoBehaviour
         else
         {
             _velocity.y = (_jumpVelocity + 1.5f);
+        }
+    }
+
+    private void WallJump()
+    {
+        _velocity.x = (_steepNormal.normalized).x * 16.5f; //remove .normalized for reeeeeee
+        _velocity.y = 8.5f;
+        if (!Mathf.Approximately(_moveVal, 0f))
+        {
+            _rb.velocity = _velocity;
         }
     }
 

@@ -48,7 +48,6 @@ public class PlayerManager : MonoBehaviour
 
     private void OnMove(InputValue input)
     {
-        //Gets Raw Axis Values : 1, 0, or -1
         PlayerInput = input.Get<Vector2>();
         // PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         characterController.Move(PlayerInput);
