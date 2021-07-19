@@ -180,6 +180,12 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        this.GetComponentInChildren<ParticleSystem>().gameObject.transform.position = other.contacts[0].point;
+        this.GetComponentInChildren<ParticleSystem>().Play();
+    }
+
     public void SetExternalVelocity(Vector2 externalVelocity)
     {
         characterController.ExternalVelocity = externalVelocity;

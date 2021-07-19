@@ -36,7 +36,7 @@ public class CharController : MonoBehaviour
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
 
-    private const int JumpBufferFrames = 10;
+    private const int JumpBufferFrames = 8;
     private const int CoyoteFlagFrames = 10;
     
     public bool JumpMaxed => (_jumpPhase > maxAirJumps || (!_onGround && maxAirJumps == 0));
@@ -131,7 +131,7 @@ public class CharController : MonoBehaviour
         {
             _desiredJump = false;
 
-            if (_jumpPhase > maxAirJumps && !_onSteep)
+            if (_jumpPhase > maxAirJumps && !_onSteep && !CheckForSteepProximity() ) //check for steep proximity here itself
             {
                 if (!_jumpBuffer)
                 {
@@ -141,7 +141,7 @@ public class CharController : MonoBehaviour
             }
             else
             {
-                ResetJumpBuffer();
+                _jumpBuffer = false;
                 Jump();
             }
 
@@ -193,6 +193,17 @@ public class CharController : MonoBehaviour
         _stepsSinceJumpBuffer++;
         _stepsSinceCoyoteFlag++;
 
+        
+        if (_stepsSinceJumpBuffer > JumpBufferFrames && _jumpBuffer)
+        {
+            _jumpBuffer = false;
+        }
+
+        if (_stepsSinceCoyoteFlag > CoyoteFlagFrames)
+        {
+            _coyoteJump = false;
+        }
+        
         if (!_onGround)
         {
             _contactNormal = Vector2.up;
@@ -210,16 +221,6 @@ public class CharController : MonoBehaviour
         if (_stepsSinceLastDash > 1)
         {
             _dashPhase = 0;
-        }
-
-        if (_stepsSinceJumpBuffer > JumpBufferFrames)
-        {
-            ResetJumpBuffer();
-        }
-
-        if (_stepsSinceCoyoteFlag > CoyoteFlagFrames)
-        {
-            _coyoteJump = false;
         }
     }
     
@@ -264,7 +265,7 @@ public class CharController : MonoBehaviour
         _stepsSinceLastJump = 0;
         _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
 
-        if (_onSteep || _steepProximity && !_onGround) //Wall Jump
+         if (_onSteep || _steepProximity && !_onGround) //Wall Jump
         {
             WallJump();
             return;
@@ -301,14 +302,14 @@ public class CharController : MonoBehaviour
 
     private bool CheckForSteepProximity()
     {
-        RaycastHit2D hitinfo = Physics2D.Raycast(this.transform.position, Vector2.right, .55f);
+        RaycastHit2D hitinfo = Physics2D.Raycast(this.transform.position, Vector2.right, .55f, 1<<0);
         if (hitinfo.collider != null)
         {
             _steepNormal = hitinfo.normal;
-            return true;
+             return true;
         }
 
-        hitinfo = Physics2D.Raycast(this.transform.position, Vector2.left, .55f);
+        hitinfo = Physics2D.Raycast(this.transform.position, Vector2.left, .55f, 1<<0);
         if (hitinfo.collider != null)
         {
             _steepNormal = hitinfo.normal;
@@ -321,7 +322,7 @@ public class CharController : MonoBehaviour
     void ClearState()
     {
         _onGround = _coyoteJump;
-        _onSteep = _desiredDash = false;
+        _onSteep = _desiredDash = _steepProximity = false;
         _contactNormal = _steepNormal = Vector2.zero;
     }
 
@@ -421,9 +422,10 @@ public class CharController : MonoBehaviour
         return vector;
     }
 
-    private void ResetJumpBuffer()
+    private void OnDrawGizmos()
     {
-        _stepsSinceJumpBuffer = 0;
-        _jumpBuffer = false;
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.left * .55f);
+        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.right * .55f);
     }
 }
