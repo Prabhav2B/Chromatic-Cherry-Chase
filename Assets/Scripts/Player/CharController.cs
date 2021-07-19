@@ -25,17 +25,20 @@ public class CharController : MonoBehaviour
     private float _desiredMovementVelocity, _desiredGravityVelocity;
     private float _jumpVelocity;
     private bool _desiredJump, _desiredDash;
-    private bool _jumpBuffer;
+    private bool _jumpBuffer, _coyoteJump;
     private bool _isDashing;
     private bool _onGround, _onSteep;
     private bool _steepProximity;
     private bool _fastFall;
     private bool _facingRight, _isStill;
     private int _jumpPhase, _dashPhase;
-    private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer;
+    private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer, _stepsSinceCoyoteFlag;
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
 
+    private const int JumpBufferFrames = 10;
+    private const int CoyoteFlagFrames = 10;
+    
     public bool JumpMaxed => (_jumpPhase > maxAirJumps || (!_onGround && maxAirJumps == 0));
     public bool DashMaxed => _dashPhase >= maxDash;
     public bool IsStill => _isStill;
@@ -144,7 +147,7 @@ public class CharController : MonoBehaviour
 
         }
 
-        if (_fastFall && fastFallActive)
+        if (_fastFall && fastFallActive && !_jumpBuffer)
         {
             if (_velocity.y >= _jumpVelocity / 3f)
                 _velocity.y += (-1f * _jumpVelocity) / 4f;
@@ -188,6 +191,7 @@ public class CharController : MonoBehaviour
         _stepsSinceLastJump++;
         _stepsSinceLastDash++;
         _stepsSinceJumpBuffer++;
+        _stepsSinceCoyoteFlag++;
 
         if (!_onGround)
         {
@@ -208,24 +212,59 @@ public class CharController : MonoBehaviour
             _dashPhase = 0;
         }
 
-        if (_stepsSinceJumpBuffer > 10)
+        if (_stepsSinceJumpBuffer > JumpBufferFrames)
         {
             ResetJumpBuffer();
         }
-    }
 
-    private void ResetJumpBuffer()
+        if (_stepsSinceCoyoteFlag > CoyoteFlagFrames)
+        {
+            _coyoteJump = false;
+        }
+    }
+    
+    void AdjustVelocity()
     {
-        _stepsSinceJumpBuffer = 0;
-        _jumpBuffer = false;
-    }
+        Vector2 xAxis = ProjectOnContactPlane(Vector2.right).normalized;
 
+        float currentX = Vector2.Dot(_velocity, xAxis);
+
+
+        float acceleration = _onGround ? maxAcceleration : maxAirAcceleration;
+        float maxSpeedChange = acceleration * Time.fixedDeltaTime;
+
+        if (Mathf.Approximately(_desiredMovementVelocity, 0f) &&
+            !_onGround) //come to stop fast when control is released mid air
+            maxSpeedChange = maxAcceleration * Time.fixedDeltaTime;
+
+        float newX = Mathf.MoveTowards(currentX, _desiredMovementVelocity, maxSpeedChange);
+
+        _velocity += xAxis * (newX - currentX);
+
+        float slopeFactor = Mathf.Abs(Vector2.Angle(_contactNormal, Vector2.up)) / 90f;
+
+
+        if (_velocity.y < -0.1 && _onGround) // little hack to adjust speed on slopes
+        {
+            _velocity += _velocity.normalized * (slopeFactor * 1.5f);
+        }
+        else if (_velocity.y > 0.1 && _onGround)
+        {
+            _velocity -= _velocity.normalized * slopeFactor;
+        }
+    }
+    
     private void Jump()
     {
+        if (_coyoteJump)
+        {
+            _coyoteJump = false;
+        }
+
         _stepsSinceLastJump = 0;
         _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
 
-        if (_onSteep || _steepProximity) //Wall Jump
+        if (_onSteep || _steepProximity && !_onGround) //Wall Jump
         {
             WallJump();
             return;
@@ -281,7 +320,8 @@ public class CharController : MonoBehaviour
 
     void ClearState()
     {
-        _onGround = _onSteep = _desiredDash = false;
+        _onGround = _coyoteJump;
+        _onSteep = _desiredDash = false;
         _contactNormal = _steepNormal = Vector2.zero;
     }
 
@@ -336,11 +376,18 @@ public class CharController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         EvaluateCollision(other);
+        _coyoteJump = false; //careful about this here
     }
 
     private void OnCollisionStay2D(Collision2D other)
     {
         EvaluateCollision(other);
+    }
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        EvaluateCollision(other);
+        _coyoteJump = !_onGround && !_onSteep && _jumpPhase == 0;
+        _stepsSinceCoyoteFlag = 0;
     }
 
     private void EvaluateCollision(Collision2D collision)
@@ -374,34 +421,9 @@ public class CharController : MonoBehaviour
         return vector;
     }
 
-    void AdjustVelocity()
+    private void ResetJumpBuffer()
     {
-        Vector2 xAxis = ProjectOnContactPlane(Vector2.right).normalized;
-
-        float currentX = Vector2.Dot(_velocity, xAxis);
-
-
-        float acceleration = _onGround ? maxAcceleration : maxAirAcceleration;
-        float maxSpeedChange = acceleration * Time.fixedDeltaTime;
-
-        if (Mathf.Approximately(_desiredMovementVelocity, 0f) &&
-            !_onGround) //come to stop fast when control is released mid air
-            maxSpeedChange = maxAcceleration * Time.fixedDeltaTime;
-
-        float newX = Mathf.MoveTowards(currentX, _desiredMovementVelocity, maxSpeedChange);
-
-        _velocity += xAxis * (newX - currentX);
-
-        float slopeFactor = Mathf.Abs(Vector2.Angle(_contactNormal, Vector2.up)) / 90f;
-
-
-        if (_velocity.y < -0.1 && _onGround) // little hack to adjust speed on slopes
-        {
-            _velocity += _velocity.normalized * (slopeFactor * 1.5f);
-        }
-        else if (_velocity.y > 0.1 && _onGround)
-        {
-            _velocity -= _velocity.normalized * slopeFactor;
-        }
+        _stepsSinceJumpBuffer = 0;
+        _jumpBuffer = false;
     }
 }

@@ -55760,7 +55760,7 @@ MonoBehaviour:
   jumpHeight: 1.75
   dashVelocity: 20
   dashVelocityDiscount: 0.95
-  maxAirJumps: 1
+  maxAirJumps: 0
   maxDash: 1
   fastFallActive: 1
 --- !u!70 &1749339175

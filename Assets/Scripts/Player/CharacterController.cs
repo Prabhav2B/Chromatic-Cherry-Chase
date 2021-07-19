@@ -25,7 +25,6 @@ public class CharacterController : MonoBehaviour
     private bool fastFall;
     private int jumpPhase;
     private float minGroundDotProduct;
-    private float naturalUpwardVelocity;
 
     public bool JumpMaxed { get; private set; }
 
@@ -140,7 +139,6 @@ public class CharacterController : MonoBehaviour
 
         if (!onGround) return;
         jumpPhase = 0;
-        naturalUpwardVelocity = 0f;
         JumpMaxed = false;
     }
 
