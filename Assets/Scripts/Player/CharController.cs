@@ -27,7 +27,7 @@ public class CharController : MonoBehaviour
     private bool _desiredJump, _desiredDash;
     private bool _jumpBuffer, _coyoteJump;
     private bool _isDashing;
-    private bool _onGround, _onSteep;
+    private bool _onGround, _onSteep, _onDownwardSlope;
     private bool _steepProximity;
     private bool _fastFall;
     private bool _facingRight, _isStill;
@@ -43,6 +43,9 @@ public class CharController : MonoBehaviour
     public bool DashMaxed => _dashPhase >= maxDash;
     public bool IsStill => _isStill;
     public bool FacingRight => _facingRight;
+    public bool OnSteep => _onSteep;
+    public bool OnDownwardSlope => _onDownwardSlope;
+    
 
     public Vector2 ExternalVelocity
     {
@@ -245,13 +248,19 @@ public class CharController : MonoBehaviour
         float slopeFactor = Mathf.Abs(Vector2.Angle(_contactNormal, Vector2.up)) / 90f;
 
 
-        if (_velocity.y < -0.1 && _onGround) // little hack to adjust speed on slopes
+        if (_velocity.y < -0.1 && _onGround && !_coyoteJump) // little hack to adjust speed on slopes
         {
             _velocity += _velocity.normalized * (slopeFactor * 1.5f);
+            _onDownwardSlope = true;
         }
-        else if (_velocity.y > 0.1 && _onGround)
+        else if (_velocity.y > 0.1 && _onGround && !_coyoteJump)
         {
             _velocity -= _velocity.normalized * slopeFactor;
+            _onDownwardSlope = false;
+        }
+        else
+        {
+            _onDownwardSlope = false;
         }
     }
     
@@ -293,7 +302,7 @@ public class CharController : MonoBehaviour
     private void WallJump()
     {
         _velocity.x = (_steepNormal.normalized).x * 16.5f; //remove .normalized for reeeeeee
-        _velocity.y = 8.5f;
+        _velocity.y = 8.25f;
         if (!Mathf.Approximately(_moveVal, 0f))
         {
             _rb.velocity = _velocity;
