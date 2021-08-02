@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
-  m_Name: Test
+  m_Name: Text_1 3
   m_EditorClassIdentifier: 
-  controlScheme1Text: This is Keyboard and Mouse.
-  controlScheme2Text: This is Gamepad.
+  controlScheme1Text: Hold direction using [WASD] and press [SHIFT] to Dash.
+  controlScheme2Text: Hold direction using [Analog Stick] and press [BUTTON WEST]
+    to Dash.

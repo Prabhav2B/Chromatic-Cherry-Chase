@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CharTween;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
 public class ControlSchemeDependentText : MonoBehaviour
 {
     [SerializeField] private ControlSchemeTextList _text; 
-    private TMP_Text _UItext;
-
+    TMP_Text _UItext;
+    private TutorialUIUpdate _updater;
     private void Awake()
     {
         _UItext = this.GetComponentInChildren<TMP_Text>();
@@ -16,12 +18,13 @@ public class ControlSchemeDependentText : MonoBehaviour
 
     private void OnEnable()
     {
-        this.GetComponentInParent<TutorialUIUpdate>().onControlSchemeChange += UpdateText;
+        _updater = GetComponentInParent<TutorialUIUpdate>(); 
+        _updater.onControlSchemeChange += UpdateText;
     }
     
     private void OnDisable()
     {
-        this.GetComponentInParent<TutorialUIUpdate>().onControlSchemeChange -= UpdateText;
+        _updater.onControlSchemeChange -= UpdateText;
     }
 
     private void UpdateText( PlayerManager.ControlScheme controlScheme)
@@ -30,4 +33,6 @@ public class ControlSchemeDependentText : MonoBehaviour
             ? _text.controlScheme1Text
             : _text.controlScheme2Text;
     }
+
+    
 }

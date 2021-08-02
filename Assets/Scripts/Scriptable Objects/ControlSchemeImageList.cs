@@ -6,6 +6,6 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "ImageList", menuName = "Image/ImageList")]
 public class ControlSchemeImageList : ScriptableObject
 {
-    public Image controlScheme1Image;
-    public Image controlScheme2Image;
+    public Sprite controlScheme1Image;
+    public Sprite controlScheme2Image;
 }
