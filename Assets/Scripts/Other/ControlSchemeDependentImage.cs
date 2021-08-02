@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VectorGraphics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ControlSchemeDependentImage : MonoBehaviour
 {
-    [SerializeField] private ControlSchemeImageList _text; 
-        private SVGImage _UISVG;
+        [SerializeField] private ControlSchemeImageList image; 
+        private SVGImage _uiSvg;
         private TutorialUIUpdate _updater;
     
         private void Awake()
         {
-            _UISVG = this.GetComponentInChildren<SVGImage>();
+            _uiSvg = this.GetComponentInChildren<SVGImage>();
         }
     
         private void OnEnable()
@@ -27,8 +28,8 @@ public class ControlSchemeDependentImage : MonoBehaviour
     
         private void UpdateImage( PlayerManager.ControlScheme controlScheme)
         {
-            _UISVG.sprite = controlScheme == PlayerManager.ControlScheme.KeyboardAndMouse
-                ? _text.controlScheme1Image
-                : _text.controlScheme2Image;
+            _uiSvg.sprite = controlScheme == PlayerManager.ControlScheme.KeyboardAndMouse
+                ? image.controlScheme1Image
+                : image.controlScheme2Image;
         }
 }

@@ -38,14 +38,14 @@ public class CharController : MonoBehaviour
 
     private const int JumpBufferFrames = 8;
     private const int CoyoteFlagFrames = 10;
-    
+
     public bool JumpMaxed => (_jumpPhase > maxAirJumps || (!_onGround && maxAirJumps == 0));
     public bool DashMaxed => _dashPhase >= maxDash;
     public bool IsStill => _isStill;
     public bool FacingRight => _facingRight;
     public bool OnSteep => _onSteep;
     public bool OnDownwardSlope => _onDownwardSlope;
-    
+
 
     public Vector2 ExternalVelocity
     {
@@ -61,6 +61,17 @@ public class CharController : MonoBehaviour
     private void Start()
     {
         _impulseSource = FindObjectOfType<CinemachineImpulseSource>();
+        if (Camera.main is { })
+        {
+            var impulseListener = Camera.main.GetComponent<CinemachineIndependentImpulseListener>();
+            if (impulseListener == null)
+            {
+                var independentImpulseListener = Camera.main.gameObject.AddComponent<CinemachineIndependentImpulseListener>();
+                independentImpulseListener.m_Gain = 0.4f;
+                independentImpulseListener.m_ChannelMask = 1<<0;
+            }
+        }
+
         _facingRight = true;
     }
 
@@ -134,7 +145,8 @@ public class CharController : MonoBehaviour
         {
             _desiredJump = false;
 
-            if (_jumpPhase > maxAirJumps && !_onSteep && !CheckForSteepProximity() ) //check for steep proximity here itself
+            if (_jumpPhase > maxAirJumps && !_onSteep &&
+                !CheckForSteepProximity()) //check for steep proximity here itself
             {
                 if (!_jumpBuffer)
                 {
@@ -147,7 +159,6 @@ public class CharController : MonoBehaviour
                 _jumpBuffer = false;
                 Jump();
             }
-
         }
 
         if (_fastFall && fastFallActive && !_jumpBuffer)
@@ -196,7 +207,7 @@ public class CharController : MonoBehaviour
         _stepsSinceJumpBuffer++;
         _stepsSinceCoyoteFlag++;
 
-        
+
         if (_stepsSinceJumpBuffer > JumpBufferFrames && _jumpBuffer)
         {
             _jumpBuffer = false;
@@ -206,7 +217,7 @@ public class CharController : MonoBehaviour
         {
             _coyoteJump = false;
         }
-        
+
         if (!_onGround)
         {
             _contactNormal = Vector2.up;
@@ -226,7 +237,7 @@ public class CharController : MonoBehaviour
             _dashPhase = 0;
         }
     }
-    
+
     void AdjustVelocity()
     {
         Vector2 xAxis = ProjectOnContactPlane(Vector2.right).normalized;
@@ -263,7 +274,7 @@ public class CharController : MonoBehaviour
             _onDownwardSlope = false;
         }
     }
-    
+
     private void Jump()
     {
         if (_coyoteJump)
@@ -274,7 +285,7 @@ public class CharController : MonoBehaviour
         _stepsSinceLastJump = 0;
         _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
 
-         if (_onSteep || _steepProximity && !_onGround) //Wall Jump
+        if (_onSteep || _steepProximity && !_onGround) //Wall Jump
         {
             WallJump();
             return;
@@ -311,17 +322,18 @@ public class CharController : MonoBehaviour
 
     private bool CheckForSteepProximity()
     {
-        RaycastHit2D hitinfo = Physics2D.Raycast(this.transform.position, Vector2.right, .55f, 1<<0);
-        if (hitinfo.collider != null)
+        RaycastHit2D hit2D = Physics2D.Raycast(this.transform.position, Vector2.right, .55f, 1 << 0);
+        var hit2DCollider = hit2D.collider;
+        if (hit2DCollider != null)
         {
-            _steepNormal = hitinfo.normal;
-             return true;
+            _steepNormal = hit2D.normal;
+            return true;
         }
 
-        hitinfo = Physics2D.Raycast(this.transform.position, Vector2.left, .55f, 1<<0);
-        if (hitinfo.collider != null)
+        hit2D = Physics2D.Raycast(this.transform.position, Vector2.left, .55f, 1 << 0);
+        if (hit2DCollider != null)
         {
-            _steepNormal = hitinfo.normal;
+            _steepNormal = hit2D.normal;
             return true;
         }
 
@@ -393,6 +405,7 @@ public class CharController : MonoBehaviour
     {
         EvaluateCollision(other);
     }
+
     private void OnCollisionExit2D(Collision2D other)
     {
         EvaluateCollision(other);
@@ -431,10 +444,11 @@ public class CharController : MonoBehaviour
         return vector;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.left * .55f);
-        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.right * .55f);
-    }
+    //Uncomment to Debug
+    // private void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.red;
+    //     Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.left * .55f);
+    //     Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.right * .55f);
+    // }
 }

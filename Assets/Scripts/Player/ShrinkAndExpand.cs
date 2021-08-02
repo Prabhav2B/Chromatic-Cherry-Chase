@@ -5,13 +5,16 @@ using DG.Tweening;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class HaloRotation : MonoBehaviour
+/// <summary>
+/// Looped shrinking tweener animation 
+/// </summary>
+public class ShrinkAndExpand : MonoBehaviour
 {
-    private Transform halo;
+    private Transform _halo;
 
     private void Awake()
     {
-        halo = this.GetComponent<Transform>();
+        _halo = this.GetComponent<Transform>();
     }
 
     private void Start()
@@ -21,12 +24,12 @@ public class HaloRotation : MonoBehaviour
     
 void SquishStart()
     {
-        halo.DOScale(new Vector3(.75f, .75f, .75f), .55f)
+        _halo.DOScale(new Vector3(.75f, .75f, .75f), .55f)
             .OnComplete(SquishRelease);
     }
 
     void SquishRelease()
     {
-        halo.DOScale(new Vector3(1.25f, 1.25f, 1.25f), .55f).OnComplete(SquishStart);;
+        _halo.DOScale(new Vector3(1.25f, 1.25f, 1.25f), .55f).OnComplete(SquishStart);;
     }
 }

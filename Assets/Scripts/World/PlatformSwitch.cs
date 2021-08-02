@@ -7,15 +7,15 @@ public class PlatformSwitch : MonoBehaviour
 {
     [SerializeField] private PlatformType myType;
 
-    private PlayerManager playerManager;
-    private SpriteRenderer[] platformSprites;
-    private Collider2D myCollider;
+    private PlayerManager _playerManager;
+    private SpriteRenderer[] _platformSprites;
+    private Collider2D _myCollider;
 
     private void Awake()
     {
-        playerManager = FindObjectOfType<PlayerManager>();
-        platformSprites = this.GetComponentsInChildren<SpriteRenderer>();
-        myCollider = this.GetComponent<Collider2D>();
+        _playerManager = FindObjectOfType<PlayerManager>();
+        _platformSprites = this.GetComponentsInChildren<SpriteRenderer>();
+        _myCollider = this.GetComponent<Collider2D>();
 
         SetProperties(myType);
     }
@@ -23,7 +23,7 @@ public class PlatformSwitch : MonoBehaviour
     
     private void Update()
     {
-        if (!(playerManager.PowerActive ^ myType == PlatformType.red))
+        if (!(_playerManager.PowerActive ^ myType == PlatformType.Red))
             ActivatePlatform(true);
         else
             ActivatePlatform(false);
@@ -31,20 +31,20 @@ public class PlatformSwitch : MonoBehaviour
 
     private void SetProperties(PlatformType type)
     {
-        foreach (var sprite in platformSprites)
+        foreach (var sprite in _platformSprites)
         {
-            sprite.color = type == PlatformType.blue ? new Color(0.32f, 0.77f, 0.98f, 0.8f) : new Color(0.98f, 0.32f, 0.32f, 0.8f);
+            sprite.color = type == PlatformType.Blue ? new Color(0.32f, 0.77f, 0.98f, 0.8f) : new Color(0.98f, 0.32f, 0.32f, 0.8f);
         }
     }
 
     private void ActivatePlatform(bool b0)
     {
-        myCollider.enabled = b0;
+        _myCollider.enabled = b0;
     }
 
-    public enum PlatformType
+    private enum PlatformType
     {
-        red,
-        blue
+        Red,
+        Blue
     }
 }
