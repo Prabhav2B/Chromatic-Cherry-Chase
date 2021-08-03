@@ -32,4 +32,9 @@ void SquishStart()
     {
         _halo.DOScale(new Vector3(1.25f, 1.25f, 1.25f), .55f).OnComplete(SquishStart);;
     }
+
+    public void StopTween()
+    {
+        _halo.DOKill();
+    }
 }

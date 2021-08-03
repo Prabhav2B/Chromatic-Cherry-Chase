@@ -10,12 +10,17 @@ public class Collectible : MonoBehaviour
     {
         if (_collectibleEffect != null)
         {
-            var effect = Instantiate(_collectibleEffect, transform.position, quaternion.Euler(-90f, 0f, 0f), transform.parent);
+            var effect = Instantiate(_collectibleEffect, transform.position, Quaternion.Euler(-90f, 0f, 0f), transform.parent);
             effect.GetComponent<ParticleSystem>().Play();
             
             Destroy(effect, 10f);
         }
 
+        var tweenAnimator = GetComponent<ShrinkAndExpand>();
+        if (tweenAnimator != null)
+        {
+            tweenAnimator.StopTween();
+        }
         Destroy(this.gameObject);
     }
 }
