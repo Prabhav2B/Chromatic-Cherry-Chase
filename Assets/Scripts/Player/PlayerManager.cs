@@ -160,7 +160,7 @@ public class PlayerManager : MonoBehaviour
 
         var particleSystemEmission = _particleSystem.emission;
         var rateOverTime = particleSystemEmission.GetBurst(0);
-        if (_characterController.OnSteep || _characterController.OnDownwardSlope)
+        if (_characterController.OnSteep || _characterController.OnDownwardSlope || _characterController.IsDashing)
         {
             var main = _particleSystem.main;
             main.loop = true;

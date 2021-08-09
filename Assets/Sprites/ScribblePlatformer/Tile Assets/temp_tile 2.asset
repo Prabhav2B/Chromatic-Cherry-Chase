@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: tile_brick_background
+  m_Name: temp_tile 2
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 4009d61c4b3b49347907b4ee51ff7786, type: 3}
-  m_Color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 0.9098039}
+  m_Sprite: {fileID: 21300000, guid: 63d477dd717f7d240be67eafba18e6ed, type: 3}
+  m_Color: {r: 0.57924527, g: 0.79519457, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0

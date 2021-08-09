@@ -45,6 +45,7 @@ public class CharController : MonoBehaviour
     public bool FacingRight => _facingRight;
     public bool OnSteep => _onSteep;
     public bool OnDownwardSlope => _onDownwardSlope;
+    public bool IsDashing => _isDashing;
 
 
     public Vector2 ExternalVelocity

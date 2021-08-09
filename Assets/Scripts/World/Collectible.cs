@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -6,6 +7,13 @@ using UnityEngine;
 public class Collectible : MonoBehaviour
 {
     [SerializeField] private GameObject _collectibleEffect;
+    private CollectibleCounter _collectibleCounter;
+
+    private void Start()
+    {
+        _collectibleCounter = FindObjectOfType<CollectibleCounter>();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (_collectibleEffect != null)
@@ -21,6 +29,8 @@ public class Collectible : MonoBehaviour
         {
             tweenAnimator.StopTween();
         }
+
+        _collectibleCounter.onCollectible?.Invoke();
         Destroy(this.gameObject);
     }
 }

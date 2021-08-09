@@ -37,6 +37,22 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-2165306985822919024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343363409169892755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6347b621526e2ad4e9d3a09ad119d2d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shrinkScale: {x: 1, y: 1, z: 1}
+  shrinkDuration: 0.55
+  expandScale: {x: 1.25, y: 1.25, z: 1.25}
+  expandDuration: 0.25
 --- !u!114 &1635466733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,18 +67,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _collectibleEffect: {fileID: 2965325071136349325, guid: 4148d56c3ae2f9c49b0568d2c85f1340,
     type: 3}
---- !u!114 &-2165306985822919024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4343363409169892755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6347b621526e2ad4e9d3a09ad119d2d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8177823974940512657
 PrefabInstance:
   m_ObjectHideFlags: 0

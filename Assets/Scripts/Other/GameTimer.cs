@@ -17,22 +17,25 @@ public class GameTimer : MonoBehaviour
     public float SecondsLeft => Mathf.Floor(_totalTime % 60f);
 
     public UnityAction onTimerExpired;
-    
+    public UnityAction onTimerTick;
+
+    private static bool _instantiated;
+
     void Awake()
     {
-        var instances = FindObjectsOfType<GameTimer>();
-        if(instances == null) return;
-        foreach (var instance in instances)
+        Debug.Assert(!_instantiated, this.gameObject);
+        if (_instantiated)
         {
-            if(instance != this)
-                Destroy(instance);
+            Destroy(this);
         }
+        _instantiated = true;
     }
 
     private void Start()
     {
         _totalTime = timeInMinutes * 60f + timeInSeconds;
         StartTimer();
+        onTimerTick?.Invoke();
     }
 
     void StartTimer()
@@ -47,9 +50,10 @@ public class GameTimer : MonoBehaviour
         {
             yield return new WaitForSeconds(1.0f);
             _totalTime--;
+            onTimerTick?.Invoke();
         }
 
-        onTimerExpired();
+        onTimerExpired?.Invoke();
         Debug.Log("Time Up!");
     }
 }
