@@ -15,12 +15,10 @@ public class TimerUI : MonoBehaviour
         _timeText = GetComponent<TMP_Text>();
         _gameTimer = FindObjectOfType<GameTimer>();
         _gameTimer.onTimerTick += UpdateTimeUI;
+        
+        
 
-        var minutes = _gameTimer.MinutesLeft < 10 ? "0" + _gameTimer.MinutesLeft : _gameTimer.MinutesLeft.ToString(CultureInfo.InvariantCulture); 
-        var seconds = _gameTimer.SecondsLeft < 10 ? "0" + _gameTimer.SecondsLeft : _gameTimer.SecondsLeft.ToString(CultureInfo.InvariantCulture); 
-        
-        
-        _timeText.text = minutes + ":" + seconds;
+        _timeText.text = $"{_gameTimer.MinutesLeft:00}:{_gameTimer.SecondsLeft:00}";
     }
 
     private void OnDisable()
@@ -31,10 +29,7 @@ public class TimerUI : MonoBehaviour
     // Update is called once per frame
     void UpdateTimeUI()
     {
-        var minutes = _gameTimer.MinutesLeft < 10 ? "0" + _gameTimer.MinutesLeft : _gameTimer.MinutesLeft.ToString(CultureInfo.InvariantCulture); 
-        var seconds = _gameTimer.SecondsLeft < 10 ? "0" + _gameTimer.SecondsLeft : _gameTimer.SecondsLeft.ToString(CultureInfo.InvariantCulture); 
-        
-        _timeText.text = minutes + ":" + seconds;
+        _timeText.text = $"{_gameTimer.MinutesLeft:00}:{_gameTimer.SecondsLeft:00}";
         TextPopA();
         
     }

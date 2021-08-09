@@ -17,12 +17,8 @@ public class CollectibleUI : MonoBehaviour
         _collectibleCounter = FindObjectOfType<CollectibleCounter>();
         _collectibleCounter.onCollectible += TextPopA;
 
-        var collectibles = _collectibleCounter.CollectibleCount < 10
-            ? "0" + _collectibleCounter.CollectibleCount
-            : _collectibleCounter.CollectibleCount.ToString(CultureInfo.InvariantCulture);
 
-
-        _collectibleText.text = collectibles;
+        _collectibleText.text = $"{_collectibleCounter.CollectibleCount:00}";;
     }
 
     private void OnDisable()
@@ -31,14 +27,9 @@ public class CollectibleUI : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        _collectibles = _collectibleCounter.CollectibleCount < 10
-            ? "0" + _collectibleCounter.CollectibleCount
-            : _collectibleCounter.CollectibleCount.ToString(CultureInfo.InvariantCulture);
-
-
-        _collectibleText.text = _collectibles;
+        _collectibleText.text = $"{_collectibleCounter.CollectibleCount:00}";;
         
     }
 
