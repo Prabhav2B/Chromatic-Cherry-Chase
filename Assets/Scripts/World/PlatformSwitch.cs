@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
+[ExecuteInEditMode]
 public class PlatformSwitch : MonoBehaviour
 {
     [SerializeField] private PlatformType myType;
     [SerializeField] private bool flips = false;
     [SerializeField] private float flipInterval = 0.0f;
+    [SerializeField] private float flipIntervalOffset = 0.0f;
 
     private PlayerManager _playerManager;
     private SpriteRenderer[] _platformSprites;
@@ -24,6 +27,12 @@ public class PlatformSwitch : MonoBehaviour
         _myCollider = this.GetComponent<Collider2D>();
         _timerUI = GetComponentInChildren<Image>();
 
+        
+    }
+
+    private void Start()
+    {
+        _timeAccumulator = flipIntervalOffset;
         SetProperties(myType);
 
         if (!flips)
@@ -31,10 +40,9 @@ public class PlatformSwitch : MonoBehaviour
             _timerUI.enabled = false;
             return;
         }
-
+        _timerUI.enabled = true;
         StartCoroutine(FlipTimer());
     }
-
 
     private void Update()
     {
@@ -70,6 +78,7 @@ public class PlatformSwitch : MonoBehaviour
     {
         myType = myType == PlatformType.Blue ? PlatformType.Red : PlatformType.Blue;
         SetProperties(myType);
+        SquishStart();
     }
 
     private IEnumerator FlipTimer()
@@ -88,6 +97,17 @@ public class PlatformSwitch : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
         }
+    }
+    
+    void SquishStart()
+    {
+        transform.DOScale(new Vector3(.75f, 1.25f, 1.0f), .15f)
+            .OnComplete(SquishRelease);
+    }
+
+    void SquishRelease()
+    {
+        transform.DOScale(new Vector3(1f, 1f, 1.0f), .15f);
     }
 
     private enum PlatformType

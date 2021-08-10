@@ -399,8 +399,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
-  flips: 1
-  flipInterval: 3
+  flips: 0
+  flipInterval: 5
 --- !u!1001 &6955826308225040640
 PrefabInstance:
   m_ObjectHideFlags: 0
