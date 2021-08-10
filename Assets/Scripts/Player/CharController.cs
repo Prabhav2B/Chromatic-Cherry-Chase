@@ -446,10 +446,10 @@ public class CharController : MonoBehaviour
     }
 
     //Uncomment to Debug
-    // private void OnDrawGizmos()
-    // {
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.left * .55f);
-    //     Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.right * .55f);
-    // }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.left * .55f);
+        Gizmos.DrawLine(this.transform.position, this.transform.position + Vector3.right * .55f);
+    }
 }
