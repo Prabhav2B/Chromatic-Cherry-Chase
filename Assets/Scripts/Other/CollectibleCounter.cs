@@ -4,32 +4,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CollectibleCounter : MonoBehaviour
+
+public class CollectibleCounter : SingleInstance<CollectibleCounter>
 {
     public UnityAction onCollectible;
 
     private float _collectibleCount;
 
     public float CollectibleCount => _collectibleCount;
-    
-    private static bool _instantiated;
 
-    void Awake()
+
+    protected override void OnEnable()
     {
-        Debug.Assert(!_instantiated, this.gameObject);
-        if (_instantiated)
-        {
-            Destroy(this);
-        }
-        _instantiated = true;
-    }
-    private void Start()
-    {
+        base.OnEnable();
         onCollectible += UpdateCollectibleCount;
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        onCollectible -= UpdateCollectibleCount;
     }
 
     void UpdateCollectibleCount()
     {
         _collectibleCount++;
     }
+
+    
 }

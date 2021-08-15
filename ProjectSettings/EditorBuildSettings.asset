@@ -53,4 +53,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayGround.unity
     guid: 0ab13427d8c27204e8a66753723a4730
+  - enabled: 1
+    path: Assets/Scenes/TestScene1.unity
+    guid: 229159b04a0d35042a93df722bb9bdeb
   m_configObjects: {}

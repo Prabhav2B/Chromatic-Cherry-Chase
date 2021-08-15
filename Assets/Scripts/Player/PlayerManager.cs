@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem.Users;
 
 [RequireComponent(typeof(CharController))]
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : SingleInstance<PlayerManager>
 {
     [SerializeField] private Sprite playerCoreA;
     [SerializeField] private Sprite playerCoreABlock;
@@ -13,14 +13,6 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Sprite playerCoreB;
     [SerializeField] private Sprite playerCoreBBlock;
     [SerializeField] private Sprite playerCoreBJumpIndicator;
-
-
-    private static PlayerManager _playerInstance;
-
-    public static PlayerManager PlayerInstance
-    {
-        get { return _playerInstance; }
-    }
 
     private SpriteRenderer _characterSpriteRenderer;
     private ParticleSystem _particleSystem;
@@ -32,6 +24,7 @@ public class PlayerManager : MonoBehaviour
     private float _lastCollisionNormal;
     private bool _powerActive;
     private PlayerInput _input;
+    private ScreenFadeManager _screenFadeManager ;
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
@@ -39,10 +32,16 @@ public class PlayerManager : MonoBehaviour
 
     public ControlScheme CurrentControlScheme { get; private set; }
 
+    private static bool _instantiated;
 
     private void Awake()
     {
-        _playerInstance = this;
+        Debug.Assert(!_instantiated, this.gameObject);
+        if(_instantiated)
+            Destroy(this);
+
+        _instantiated = true;
+
         _input = GetComponent<PlayerInput>();
 
         _characterController = GetComponent<CharController>();
@@ -55,13 +54,16 @@ public class PlayerManager : MonoBehaviour
         _particleSystem = this.GetComponentInChildren<ParticleSystem>();
         UpdateCurrentScheme(_input.currentControlScheme);
         
+        Deactivate();
     }
     
-    void OnEnable() {
+    protected override void OnEnable() {
+        base.OnEnable();
         InputUser.onChange += onInputDeviceChange;
     }
  
-    void OnDisable() {
+    protected override void OnDisable() {
+        base.OnDisable();
         InputUser.onChange -= onInputDeviceChange;
     }
 
@@ -85,6 +87,12 @@ public class PlayerManager : MonoBehaviour
         _characterController.Move(ReceivedInput);
     }
 
+    private void OnResetScene()
+    {
+        Deactivate(); //Turn of input from user
+        _screenFadeManager.FadeOut(_levelResetHandler.ExecuteLevelReload);
+    }
+    
     private void OnJump(InputValue input)
     {
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
@@ -127,14 +135,7 @@ public class PlayerManager : MonoBehaviour
 
     private void OnPowerA(InputValue input)
     {
-        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
-        {
-            _powerActive = true;
-        }
-        else
-        {
-            _powerActive = false;
-        }
+        _powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
         SquishStart();
         CheckForSpriteUpdates();
     }
@@ -267,5 +268,22 @@ public class PlayerManager : MonoBehaviour
     {
         KeyboardAndMouse,
         Gamepad
+    }
+
+    public void Deactivate()
+    {
+        GetComponent<PlayerInput>().enabled = false;
+    }
+    
+    public void Activate()
+    {
+        GetComponent<PlayerInput>().enabled = true;
+    }
+
+    private void DestroyInstance()
+    {
+        _instantiated = false;
+        this.enabled = false;
+        Destroy(this);
     }
 }
