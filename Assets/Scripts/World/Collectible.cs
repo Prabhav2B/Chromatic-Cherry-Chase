@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class Collectible : MonoBehaviour
@@ -12,6 +8,13 @@ public class Collectible : MonoBehaviour
     private void Start()
     {
         _collectibleCounter = FindObjectOfType<CollectibleCounter>();
+        var levelResetHandler = FindObjectOfType<LevelResetHandler>();
+        levelResetHandler.onLevelReload += ResetCollectible;
+    }
+
+    void ResetCollectible()
+    {
+        gameObject.SetActive(true);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -31,6 +34,7 @@ public class Collectible : MonoBehaviour
         }
 
         _collectibleCounter.onCollectible?.Invoke();
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
+        gameObject.SetActive(false);
     }
 }

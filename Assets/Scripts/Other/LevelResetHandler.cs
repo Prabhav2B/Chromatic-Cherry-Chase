@@ -3,32 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelResetHandler : SingleInstance<LevelResetHandler>
+public class LevelResetHandler : MonoBehaviour
 {
     public Action onLevelStart;
     public Action onLevelEnd;
-    private Action onLevelReload;
+    public Action onLevelReload;
+    
+    private static bool _instantiated;
     
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-    }
+        //Debug.Assert(!_instantiated, this.gameObject);
+        if (_instantiated)
+        {
+            Destroy(this);
+        }
 
-    protected override void OnEnable()
-    {
-        //DOES NOTHING ON PURPOSE
-        //THIS ONE PERSISTS AND MANAGES OVERALL GAME ACTIVITY
-    }
-    
-    protected override void OnDisable()
-    {
-        //DOES NOTHING ON PURPOSE
-        //THIS ONE PERSISTS AND MANAGES OVERALL GAME ACTIVITY
+        _instantiated = true;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void ExecuteLevelReload()
     {
         onLevelReload?.Invoke();
+    }
+    
+    public void ExecuteLevelEnd()
+    {
+        onLevelEnd?.Invoke();
     }
 
 

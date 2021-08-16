@@ -6,7 +6,7 @@ public abstract class SingleInstance<T> : MonoBehaviour
 {
     private static bool _instantiated;
     protected LevelResetHandler _levelResetHandler;
-    void Awake()
+    protected virtual void Awake()
     {
         Debug.Assert(!_instantiated, this.gameObject);
         if (_instantiated)

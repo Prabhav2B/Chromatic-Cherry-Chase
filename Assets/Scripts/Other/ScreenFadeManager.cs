@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ScreenFadeManager : MonoBehaviour
 {
-    [SerializeField] private PlayerManager playerManager;
+    private PlayerManager playerManager;
     [SerializeField] private float fadeInDuration = 1f;
 
     private Image _transitionImage;
@@ -36,6 +36,16 @@ public class ScreenFadeManager : MonoBehaviour
     public void FadeOut(PostFadeOut f)
     {
         _transitionImage.DOFade(1f, fadeInDuration).OnComplete(f.Invoke);
+    }
+
+    public void FadeIn()
+    {
+        _transitionImage.DOFade(0f, fadeInDuration);
+    }
+    
+    public void FadeOut()
+    {
+        _transitionImage.DOFade(1f, fadeInDuration);
     }
 
     private IEnumerator StaggeredGameStart()

@@ -341,7 +341,7 @@ public class CharController : MonoBehaviour
         return false;
     }
 
-    void ClearState()
+    public void ClearState()
     {
         _onGround = _coyoteJump;
         _onSteep = _desiredDash = _steepProximity = false;

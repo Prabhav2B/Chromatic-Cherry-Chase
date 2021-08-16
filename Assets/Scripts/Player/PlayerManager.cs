@@ -3,6 +3,7 @@ using DG.Tweening;
 using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem.Users;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharController))]
 public class PlayerManager : SingleInstance<PlayerManager>
@@ -23,29 +24,26 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private Vector3 _lastCollisionPoint;
     private float _lastCollisionNormal;
     private bool _powerActive;
+    private int _movementTweenFlag;
     private PlayerInput _input;
-    private ScreenFadeManager _screenFadeManager ;
+    private ScreenFadeManager _screenFadeManager;
+    private Vector3 _initalPosition;
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
     public bool PowerActive => _powerActive;
+    
 
     public ControlScheme CurrentControlScheme { get; private set; }
 
-    private static bool _instantiated;
-
-    private void Awake()
+    protected override void Awake()
     {
-        Debug.Assert(!_instantiated, this.gameObject);
-        if(_instantiated)
-            Destroy(this);
-
-        _instantiated = true;
-
+        base.Awake();
         _input = GetComponent<PlayerInput>();
 
         _characterController = GetComponent<CharController>();
         _timeBend = GetComponent<TimeBend>();
+        _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
 
         _characterSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[0];
         _jumpIndicatorSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[1];
@@ -53,18 +51,47 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
         _particleSystem = this.GetComponentInChildren<ParticleSystem>();
         UpdateCurrentScheme(_input.currentControlScheme);
-        
+
         Deactivate();
     }
-    
-    protected override void OnEnable() {
+
+    private void Start()
+    {
+        _initalPosition = transform.position;
+        _movementTweenFlag = -1;
+    }
+
+    protected override void OnEnable()
+    {
         base.OnEnable();
         InputUser.onChange += onInputDeviceChange;
+        _levelResetHandler.onLevelReload += _characterController.ClearState;
+        _levelResetHandler.onLevelReload += ResetPlayerPosition;
     }
- 
-    protected override void OnDisable() {
+
+    protected override void OnDisable()
+    {
         base.OnDisable();
         InputUser.onChange -= onInputDeviceChange;
+        _levelResetHandler.onLevelReload -= _characterController.ClearState;
+        _levelResetHandler.onLevelReload -= ResetPlayerPosition;
+    }
+    
+    private void OnResetScene()
+    {
+        Deactivate(); //Turn of input from user
+        ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelReload;
+        fadeOutAction += _screenFadeManager.FadeIn;
+        fadeOutAction += Activate;
+        _screenFadeManager.FadeOut(fadeOutAction);
+        fadeOutAction = null;
+
+    }
+
+
+    private void ResetPlayerPosition()
+    {
+        transform.position = _initalPosition;
     }
 
     private void onInputDeviceChange(InputUser user, InputUserChange change, InputDevice device)
@@ -83,16 +110,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private void OnMove(InputValue input)
     {
         ReceivedInput = input.Get<Vector2>();
-        // PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
+        //PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         _characterController.Move(ReceivedInput);
     }
-
-    private void OnResetScene()
-    {
-        Deactivate(); //Turn of input from user
-        _screenFadeManager.FadeOut(_levelResetHandler.ExecuteLevelReload);
-    }
-    
     private void OnJump(InputValue input)
     {
         if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
@@ -107,17 +127,17 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
-    private void OnTimeBend(InputValue input)
-    {
-        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
-        {
-            _timeBend.TimeBendInitiate();
-        }
-        else
-        {
-            _timeBend.TimeBendEnd();
-        }
-    }
+    // private void OnTimeBend(InputValue input)
+    // {
+    //     if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+    //     {
+    //         _timeBend.TimeBendInitiate();
+    //     }
+    //     else
+    //     {
+    //         _timeBend.TimeBendEnd();
+    //     }
+    // }
 
     private void OnDash(InputValue input)
     {
@@ -144,19 +164,29 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         if (_characterController.IsStill)
         {
-            _spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.4f);
+            if (_movementTweenFlag != 0)
+            {
+                _movementTweenFlag = 0;
+                _spriteRendererTransform.DOLocalRotate(Vector3.zero, 0.2f);
+            }
         }
         else if (_characterController.FacingRight)
         {
-            //turn into a tweener?
-            _spriteRendererTransform.DOLocalRotate(Vector3.forward * -5f, 1.0f);
-            _characterSpriteRenderer.flipX = false;
+            if (_movementTweenFlag != 1)
+            {
+                _movementTweenFlag = 1;
+                _spriteRendererTransform.DOLocalRotate(Vector3.forward * -5f, 0.1f);
+                _characterSpriteRenderer.flipX = false;
+            }
         }
         else
         {
-            //turn into a tweener?
-            _spriteRendererTransform.DOLocalRotate(Vector3.forward * 5f, 1.0f);
-            _characterSpriteRenderer.flipX = true;
+            if (_movementTweenFlag != 2)
+            {
+                _movementTweenFlag = 2;
+                _spriteRendererTransform.DOLocalRotate(Vector3.forward * 5f, 0.1f);
+                _characterSpriteRenderer.flipX = true;
+            }
         }
 
         var particleSystemEmission = _particleSystem.emission;
@@ -274,16 +304,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         GetComponent<PlayerInput>().enabled = false;
     }
-    
+
     public void Activate()
     {
         GetComponent<PlayerInput>().enabled = true;
-    }
-
-    private void DestroyInstance()
-    {
-        _instantiated = false;
-        this.enabled = false;
-        Destroy(this);
     }
 }

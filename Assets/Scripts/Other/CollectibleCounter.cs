@@ -13,6 +13,11 @@ public class CollectibleCounter : SingleInstance<CollectibleCounter>
 
     public float CollectibleCount => _collectibleCount;
 
+    private void Start()
+    {
+        var levelResetHandler = FindObjectOfType<LevelResetHandler>();
+        levelResetHandler.onLevelReload += ResetCounter;
+    }
 
     protected override void OnEnable()
     {
@@ -31,5 +36,8 @@ public class CollectibleCounter : SingleInstance<CollectibleCounter>
         _collectibleCount++;
     }
 
-    
+    private void ResetCounter()
+    {
+        _collectibleCount = 0;
+    }
 }
