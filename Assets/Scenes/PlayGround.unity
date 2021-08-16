@@ -3830,6 +3830,7 @@ GameObject:
   m_Component:
   - component: {fileID: 590878587}
   - component: {fileID: 590878588}
+  - component: {fileID: 590878589}
   m_Layer: 0
   m_Name: Level Transition Trigger
   m_TagString: Untagged
@@ -3861,7 +3862,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -1.47258, y: -1.155695}
@@ -3877,6 +3878,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 8.493378, y: 5.697338}
   m_EdgeRadius: 0
+--- !u!114 &590878589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 590878586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a498046c35782cd43810a13b304c569a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &599002487
 GameObject:
   m_ObjectHideFlags: 0
@@ -85993,10 +86006,19 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1616931778}
     m_Modifications:
+    - target: {fileID: 875437096, guid: 26d6901f453cbe84fa482c9707d833c2, type: 3}
+      propertyPath: ShapeModule.m_Scale.x
+      value: 0.59
+      objectReference: {fileID: 0}
     - target: {fileID: 4082875113336562945, guid: 26d6901f453cbe84fa482c9707d833c2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 15.716832
+      value: 11.441075
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082875113336562945, guid: 26d6901f453cbe84fa482c9707d833c2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.1605
       objectReference: {fileID: 0}
     - target: {fileID: 4082875114320793996, guid: 26d6901f453cbe84fa482c9707d833c2,
         type: 3}
@@ -86061,7 +86083,12 @@ PrefabInstance:
     - target: {fileID: 4082875114320793998, guid: 26d6901f453cbe84fa482c9707d833c2,
         type: 3}
       propertyPath: m_Size.x
-      value: 5.0199947
+      value: 3.5570679
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082875114320793998, guid: 26d6901f453cbe84fa482c9707d833c2,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: -2.1461487
       objectReference: {fileID: 0}
     - target: {fileID: 4082875114320793999, guid: 26d6901f453cbe84fa482c9707d833c2,
         type: 3}

@@ -15,6 +15,7 @@ public class TransitionToMainLevel : MonoBehaviour
         SceneTransitionManagement s = FindObjectOfType<SceneTransitionManagement>();
         fadeOutAction += s.LoadNextLevel;
         _screenFadeManager.FadeOut(fadeOutAction);
+        _levelResetHandler.onLevelReload = null;
         fadeOutAction = null;
     }
 }

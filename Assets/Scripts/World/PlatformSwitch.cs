@@ -8,6 +8,9 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class PlatformSwitch : MonoBehaviour
 {
+    [SerializeField] private Sprite blockPlatformSprite;
+    [SerializeField] private Sprite capsulePlatformSprite;
+    
     [SerializeField] private PlatformType myType;
     [SerializeField] private bool flips = false;
     [SerializeField] private float flipInterval = 0.0f;
@@ -59,6 +62,10 @@ public class PlatformSwitch : MonoBehaviour
             sprite.color = type == PlatformType.Blue
                 ? new Color(0.29f, 0.55f, 0.98f, 0.8f)
                 : new Color(0.98f, 0.76f, 0.28f, 0.8f);
+            
+            sprite.sprite = type == PlatformType.Blue
+                ? capsulePlatformSprite
+                : blockPlatformSprite;
         }
 
         if (flips)
