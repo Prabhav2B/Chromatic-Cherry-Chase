@@ -3,16 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 [DisallowMultipleComponent]
 public class GameTimer : SingleInstance<GameTimer>
 {
     [SerializeField] private Image timerImage;
-    
-    [SerializeField, Range(0, 100)] private int timeInMinutes = 1;
-    [SerializeField, Range(0, 59)] private int timeInSeconds = 30;
 
+    [SerializeField] private TimeLimits timeLimits;
+
+    private ScreenFadeManager _screenFadeManager;
+    private PlayerManager _playerManager;
+
+    
     private float _totalTime;
     private float _currentTime;
     
@@ -20,19 +25,44 @@ public class GameTimer : SingleInstance<GameTimer>
     public float MinutesLeft => Mathf.Floor(_currentTime / 60f);
     public float SecondsLeft => Mathf.Floor(_currentTime % 60f);
 
-    public UnityAction onTimerExpired;
+    private UnityAction onTimerExpired;
     public UnityAction onTimerTick;
-    
+
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
+        _playerManager = FindObjectOfType<PlayerManager>();
+    }
 
     private void Start()
     {
-        var levelResetHandler = FindObjectOfType<LevelResetHandler>();
-        levelResetHandler.onLevelReload += ResetTimer;
-    
-        _totalTime = timeInMinutes * 60f + timeInSeconds;
+        var randomTimeLimit = timeLimits.timeLimits [Random.Range(0, timeLimits.timeLimits.Count)];
+        
+        _totalTime = randomTimeLimit.minutes * 60f + randomTimeLimit.seconds;
+        onTimerExpired += () =>  Application.OpenURL(randomTimeLimit.surveyURL);
+
+        //_totalTime = 15;
         _currentTime = _totalTime;
         StartTimer();
         onTimerTick?.Invoke();
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        _levelResetHandler.onLevelReload += ResetTimer;
+        onTimerExpired += _screenFadeManager.FadeOut;
+        onTimerExpired += _playerManager.Deactivate;
+    }
+    
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        _levelResetHandler.onLevelReload -= ResetTimer;
+        onTimerExpired -= _screenFadeManager.FadeOut;
+        onTimerExpired -= _playerManager.Deactivate;
     }
 
     void StartTimer()
@@ -57,6 +87,6 @@ public class GameTimer : SingleInstance<GameTimer>
         }
 
         onTimerExpired?.Invoke();
-        Debug.Log("Time Up!");
+        
     }
 }
