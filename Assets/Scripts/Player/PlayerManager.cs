@@ -153,9 +153,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
-    private void OnPowerA(InputValue input)
+    private void OnPowerA()
     {
-        _powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
+        //_powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
+        _powerActive = !_powerActive;
         SquishStart();
         CheckForSpriteUpdates();
     }
