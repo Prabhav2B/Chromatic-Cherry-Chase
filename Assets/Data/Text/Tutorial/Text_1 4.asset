@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
   m_Name: Text_1 4
   m_EditorClassIdentifier: 
-  controlScheme1Text: 'Press and Hold [LEFT MOUSE BUTTON] to activate block form.
-    Red Platforms can only be traversed in Block Form! '
+  controlScheme1Text: 'Press and Hold [C] to activate block form. Red Platforms can
+    only be traversed in Block Form! '
   controlScheme2Text: 'Press and Hold [RIGHT TRIGGER] to activate block form. Red
     Platforms can only be traversed in Block Form! '

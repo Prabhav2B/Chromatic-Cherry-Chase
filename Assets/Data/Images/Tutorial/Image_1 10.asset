@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b6628626cd2e54ba0cfe694665be3c, type: 3}
   m_Name: Image_1 10
   m_EditorClassIdentifier: 
-  controlScheme1Image: {fileID: 3286163911610860551, guid: cb4750b271e48e646a3a61db6286c9fa,
+  controlScheme1Image: {fileID: 3286163911610860551, guid: 683e7d75a53b74e449d0515c4f0f7b40,
     type: 3}
   controlScheme2Image: {fileID: 3286163911610860551, guid: 761e7cc46c327374786b7ec68fc5a110,
     type: 3}
