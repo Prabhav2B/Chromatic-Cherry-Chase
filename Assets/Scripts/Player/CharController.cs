@@ -157,10 +157,18 @@ public class CharController : MonoBehaviour
                     _stepsSinceJumpBuffer = 0;
                 }
             }
-            else
+            else if(_jumpPhase <= maxAirJumps || (_onSteep && _moveVal != _slopeDir))
             {
                 _jumpBuffer = false;
                 Jump();
+            }
+            else
+            {
+                if (!_jumpBuffer)
+                {
+                    _jumpBuffer = true;
+                    _stepsSinceJumpBuffer = 0;
+                }
             }
         }
 
@@ -330,7 +338,7 @@ public class CharController : MonoBehaviour
         if (hit2DCollider != null)
         {
             _steepNormal = hit2D.normal;
-            _slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
+            //_slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
             return true;
         }
 
@@ -338,7 +346,7 @@ public class CharController : MonoBehaviour
         if (hit2DCollider != null)
         {
             _steepNormal = hit2D.normal;
-            _slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
+            //_slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
 
             return true;
         }
