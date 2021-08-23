@@ -23,7 +23,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private TimeBend _timeBend;
     private Vector3 _lastCollisionPoint;
     private float _lastCollisionNormal;
-    private bool _powerActive;
+    private bool _powerActive, _powerInputLock;
     private int _movementTweenFlag;
     private PlayerInput _input;
     private ScreenFadeManager _screenFadeManager;
@@ -153,12 +153,25 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
-    private void OnPowerA()
+    private void OnPowerA(InputValue input)
     {
+        if (input.Get<float>() > 0.8f && !_powerInputLock)
+        {
+            _powerActive = !_powerActive;
+            _powerInputLock = true;
+            SquishStart();
+            CheckForSpriteUpdates();
+        }
+        else if ( input.Get<float>() < 0.8f )
+        {
+            _powerInputLock = false;
+            // SquishStart();
+            //CheckForSpriteUpdates();
+        }
+
         //_powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
-        _powerActive = !_powerActive;
-        SquishStart();
-        CheckForSpriteUpdates();
+        // SquishStart();
+        // CheckForSpriteUpdates();
     }
 
     void Update()

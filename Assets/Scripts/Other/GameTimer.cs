@@ -20,12 +20,13 @@ public class GameTimer : SingleInstance<GameTimer>
     
     private float _totalTime;
     private float _currentTime;
+    private bool _stopTimer;
     
     public float TotalTime => _totalTime;
     public float MinutesLeft => Mathf.Floor(_currentTime / 60f);
     public float SecondsLeft => Mathf.Floor(_currentTime % 60f);
 
-    private UnityAction onTimerExpired;
+    public UnityAction onTimerExpired;
     public UnityAction onTimerTick;
 
 
@@ -76,9 +77,14 @@ public class GameTimer : SingleInstance<GameTimer>
         _currentTime = _totalTime;
     }
 
+    public void StopTimer()
+    {
+        _stopTimer = true;
+    }
+
     IEnumerator Tick()
     {
-        while (_currentTime > 0)
+        while (_currentTime > 0 && !_stopTimer)
         {
             yield return new WaitForSeconds(1.0f);
             _currentTime--;
@@ -86,7 +92,8 @@ public class GameTimer : SingleInstance<GameTimer>
             timerImage.fillAmount = _currentTime / _totalTime;
         }
 
-        onTimerExpired?.Invoke();
+        if(!_stopTimer)
+            onTimerExpired?.Invoke();
         
     }
 }

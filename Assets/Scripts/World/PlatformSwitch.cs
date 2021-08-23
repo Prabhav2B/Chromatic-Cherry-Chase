@@ -79,6 +79,17 @@ public class PlatformSwitch : MonoBehaviour
     private void ActivatePlatform(bool b0)
     {
         _myCollider.enabled = b0;
+
+        foreach (var sprite in _platformSprites)
+        {
+            var spriteColor = sprite.color;
+            spriteColor.a = b0 ? 1f : .4f;
+            sprite.color = spriteColor;
+            
+            var timerColor = _timerUI.color;
+            timerColor.a = b0 ? 1f : .4f;
+            _timerUI.color = timerColor;
+        }
     }
 
     private void FlipPlatformerType()
