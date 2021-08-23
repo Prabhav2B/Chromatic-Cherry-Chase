@@ -31,7 +31,7 @@ public class CharController : MonoBehaviour
     private bool _steepProximity;
     private bool _fastFall;
     private bool _facingRight, _isStill;
-    private int _jumpPhase, _dashPhase;
+    private int _jumpPhase, _dashPhase, _slopeDir;
     private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer, _stepsSinceCoyoteFlag;
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
@@ -67,13 +67,15 @@ public class CharController : MonoBehaviour
             var impulseListener = Camera.main.GetComponent<CinemachineIndependentImpulseListener>();
             if (impulseListener == null)
             {
-                var independentImpulseListener = Camera.main.gameObject.AddComponent<CinemachineIndependentImpulseListener>();
+                var independentImpulseListener =
+                    Camera.main.gameObject.AddComponent<CinemachineIndependentImpulseListener>();
                 independentImpulseListener.m_Gain = 0.4f;
-                independentImpulseListener.m_ChannelMask = 1<<0;
+                independentImpulseListener.m_ChannelMask = 1 << 0;
             }
         }
 
         _facingRight = true;
+        _slopeDir = 0;
     }
 
     public void Move(Vector2 moveVector)
@@ -286,7 +288,7 @@ public class CharController : MonoBehaviour
         _stepsSinceLastJump = 0;
         _steepProximity = !_onSteep && CheckForSteepProximity(); //remember to set steep normal too
 
-        if (_onSteep || _steepProximity && !_onGround) //Wall Jump
+        if ((_onSteep || _steepProximity) && !_onGround && _slopeDir != (int) _moveVal) //Wall Jump
         {
             WallJump();
             return;
@@ -328,6 +330,7 @@ public class CharController : MonoBehaviour
         if (hit2DCollider != null)
         {
             _steepNormal = hit2D.normal;
+            _slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
             return true;
         }
 
@@ -335,6 +338,8 @@ public class CharController : MonoBehaviour
         if (hit2DCollider != null)
         {
             _steepNormal = hit2D.normal;
+            _slopeDir = transform.position.x > hit2DCollider.ClosestPoint(transform.position).x ? -1 : 1;
+
             return true;
         }
 
@@ -346,6 +351,7 @@ public class CharController : MonoBehaviour
         _onGround = _coyoteJump;
         _onSteep = _desiredDash = _steepProximity = false;
         _contactNormal = _steepNormal = Vector2.zero;
+        _slopeDir = 0;
     }
 
     public void ClampVelocity()
@@ -430,12 +436,14 @@ public class CharController : MonoBehaviour
             {
                 _onSteep = true;
                 _steepNormal += normal;
+                _slopeDir = transform.position.x > collision.contacts[i].point.x ? -1 : 1;
             }
         }
 
         if (_onGround && _onSteep) // a hack
         {
             _onSteep = false;
+            _slopeDir = 0;
         }
     }
 

@@ -155,23 +155,23 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     private void OnPowerA(InputValue input)
     {
-        if (input.Get<float>() > 0.8f && !_powerInputLock)
-        {
-            _powerActive = !_powerActive;
-            _powerInputLock = true;
-            SquishStart();
-            CheckForSpriteUpdates();
-        }
-        else if ( input.Get<float>() < 0.8f )
-        {
-            _powerInputLock = false;
-            // SquishStart();
-            //CheckForSpriteUpdates();
-        }
+        // if (input.Get<float>() > 0.8f && !_powerInputLock)
+        // {
+        //     _powerActive = !_powerActive;
+        //     _powerInputLock = true;
+        //     SquishStart();
+        //     CheckForSpriteUpdates();
+        // }
+        // else if ( input.Get<float>() < 0.8f )
+        // {
+        //     _powerInputLock = false;
+        //     // SquishStart();
+        //     //CheckForSpriteUpdates();
+        // }
 
-        //_powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
-        // SquishStart();
-        // CheckForSpriteUpdates();
+        _powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
+         SquishStart();
+         CheckForSpriteUpdates();
     }
 
     void Update()
