@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -7,22 +8,25 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenuUI;
-    [SerializeField] Image transitionImage;
+    [SerializeField] private Image transitionImage;
     [SerializeField] private float fadeInDuration = 0.5f;
+    
     private bool _menuActive;
-
+    
     public void TriggerMainMenu()
     {
         _menuActive = !_menuActive;
 
         if (_menuActive)
         {
+            AudioListener.pause = true;
             var tScale = Time.timeScale;
             DOTween.To(() => tScale, x => Time.timeScale = x, 0f, 0.4f);
             transitionImage.DOFade(.8f, fadeInDuration).SetUpdate(true).OnComplete(ActiveMainMenu);
         }
         else
         {
+            AudioListener.pause = false;
             var tScale = Time.timeScale;
             DOTween.To(() => tScale, x => Time.timeScale = x, 1f, 0.4f);
             DeactiveMainMenu();

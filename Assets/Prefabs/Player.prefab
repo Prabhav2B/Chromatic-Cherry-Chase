@@ -95,6 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6347b621526e2ad4e9d3a09ad119d2d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shrinkScale: {x: 0.75, y: 0.75, z: 0.75}
+  shrinkDuration: 0.55
+  expandScale: {x: 1.25, y: 1.25, z: 1.25}
+  expandDuration: 0.55
 --- !u!1 &5721549696412101228
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,6 +116,7 @@ GameObject:
   - component: {fileID: 5721549696412101217}
   - component: {fileID: 5721549696412101219}
   - component: {fileID: 5721549696412101221}
+  - component: {fileID: 790040812201190829}
   m_Layer: 13
   m_Name: Player
   m_TagString: Untagged
@@ -422,6 +427,23 @@ MonoBehaviour:
     m_DissipationMode: 2
     m_DissipationDistance: 1000
     m_PropagationSpeed: 343
+--- !u!114 &790040812201190829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5721549696412101228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5a1d40c93838b44a8a8fa46ff267c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpAudio: {fileID: 0}
+  dashAudio: {fileID: 0}
+  walkAudio: {fileID: 0}
+  landAudio: {fileID: 0}
+  switchAudio: {fileID: 0}
 --- !u!1 &5721549697003570695
 GameObject:
   m_ObjectHideFlags: 0
