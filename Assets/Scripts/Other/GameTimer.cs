@@ -17,11 +17,12 @@ public class GameTimer : SingleInstance<GameTimer>
     private ScreenFadeManager _screenFadeManager;
     private PlayerManager _playerManager;
 
-    
+
     private float _totalTime;
     private float _currentTime;
     private bool _stopTimer;
-    
+    private EndCardManager _endCardManager;
+
     public float TotalTime => _totalTime;
     public float MinutesLeft => Mathf.Floor(_currentTime / 60f);
     public float SecondsLeft => Mathf.Floor(_currentTime % 60f);
@@ -35,14 +36,26 @@ public class GameTimer : SingleInstance<GameTimer>
         base.Awake();
         _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
         _playerManager = FindObjectOfType<PlayerManager>();
+        _endCardManager = FindObjectOfType<EndCardManager>();
     }
 
     private void Start()
     {
-        var randomTimeLimit = timeLimits.timeLimits [Random.Range(0, timeLimits.timeLimits.Count)];
+        var randomTimeLimit = timeLimits.timeLimits[Random.Range(0, timeLimits.timeLimits.Count)];
+
         
+        _endCardManager.LinkText = randomTimeLimit.surveyURL;
+
         _totalTime = randomTimeLimit.minutes * 60f + randomTimeLimit.seconds;
-        onTimerExpired += () =>  Application.OpenURL(randomTimeLimit.surveyURL);
+        
+
+        var openURL = gameObject.AddComponent<OpenURL>();
+        
+#if !UNITY_EDITOR && UNITY_WEBGL
+        onTimerExpired += () => openURL.OpenIt(randomTimeLimit.surveyURL);
+#else
+        onTimerExpired += () => Application.OpenURL(randomTimeLimit.surveyURL);
+#endif
 
         //_totalTime = 15;
         _currentTime = _totalTime;
@@ -54,14 +67,16 @@ public class GameTimer : SingleInstance<GameTimer>
     {
         base.OnEnable();
         _levelResetHandler.onLevelReload += ResetTimer;
+        onTimerExpired += _endCardManager.Activate;
         onTimerExpired += _screenFadeManager.FadeOut;
         onTimerExpired += _playerManager.Deactivate;
     }
-    
+
     protected override void OnDisable()
     {
         base.OnDisable();
         _levelResetHandler.onLevelReload -= ResetTimer;
+        onTimerExpired -= _endCardManager.Activate;
         onTimerExpired -= _screenFadeManager.FadeOut;
         onTimerExpired -= _playerManager.Deactivate;
     }
@@ -92,8 +107,7 @@ public class GameTimer : SingleInstance<GameTimer>
             timerImage.fillAmount = _currentTime / _totalTime;
         }
 
-        if(!_stopTimer)
+        if (!_stopTimer)
             onTimerExpired?.Invoke();
-        
     }
 }

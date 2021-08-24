@@ -46,9 +46,9 @@
                     "interactions": ""
                 },
                 {
-                    "name": "ResetScene",
+                    "name": "MainMenu",
                     "type": "Button",
-                    "id": "f1100254-f89e-44db-be07-df7ad3a6270d",
+                    "id": "3cb0f16e-21a5-49ba-84fa-bcad75f17fa0",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -299,23 +299,23 @@
                 },
                 {
                     "name": "",
-                    "id": "952a635d-089c-4695-bb1a-76263b404621",
-                    "path": "<Keyboard>/r",
+                    "id": "fc0eb343-a2b5-4201-873e-9cad0179ed3a",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
-                    "action": "ResetScene",
+                    "action": "MainMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "4688bd46-efbd-4967-b88a-f0050c7b50f2",
+                    "id": "d1582f49-0fc8-4c65-8678-dad4f0d93529",
                     "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "ResetScene",
+                    "action": "MainMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

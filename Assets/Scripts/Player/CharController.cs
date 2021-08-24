@@ -119,7 +119,7 @@ public class CharController : MonoBehaviour
         {
             _facingRight = false;
         }
-        else
+        else if(!_isDashing)
         {
             _isStill = true;
         }
@@ -374,7 +374,7 @@ public class CharController : MonoBehaviour
     private IEnumerator Dash()
     {
         _isDashing = true;
-
+        
         if (Mathf.Approximately(_dashDir.sqrMagnitude, 0f)) //needs to be recorded before setting velocity to zero
         {
             _dashDir = _facingRight ? Vector2.right : Vector2.left;
@@ -383,6 +383,7 @@ public class CharController : MonoBehaviour
         _dashDir.Normalize();
 
         _rb.velocity = Vector2.zero;
+        _isStill = false;
         yield return new WaitForSeconds(.05f);
 
         _impulseSource.GenerateImpulse();

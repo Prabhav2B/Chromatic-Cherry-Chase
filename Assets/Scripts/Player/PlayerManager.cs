@@ -24,9 +24,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private Vector3 _lastCollisionPoint;
     private float _lastCollisionNormal;
     private bool _powerActive, _powerInputLock;
-    private int _movementTweenFlag;
+    private int _movementTweenFlag, _dotIndicatorTweenFlag;
     private PlayerInput _input;
     private ScreenFadeManager _screenFadeManager;
+    private MainMenu _mainMenu;
     private Vector3 _initalPosition;
 
     protected Vector2 MoveVector;
@@ -44,6 +45,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _characterController = GetComponent<CharController>();
         _timeBend = GetComponent<TimeBend>();
         _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
+        _mainMenu = FindObjectOfType<MainMenu>();
 
         _characterSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[0];
         _jumpIndicatorSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[1];
@@ -77,7 +79,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _levelResetHandler.onLevelReload -= ResetPlayerPosition;
     }
     
-    private void OnResetScene()
+    public void ResetScene()
     {
         Deactivate(); //Turn of input from user
         ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelReload;
@@ -85,7 +87,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
         fadeOutAction += Activate;
         _screenFadeManager.FadeOut(fadeOutAction);
         fadeOutAction = null;
-
     }
 
 
@@ -107,6 +108,11 @@ public class PlayerManager : SingleInstance<PlayerManager>
         CurrentControlScheme = schemeName.Equals("Gamepad") ? ControlScheme.Gamepad : ControlScheme.KeyboardAndMouse;
     }
 
+    private void OnMainMenu(InputValue input)
+    {
+       _mainMenu.TriggerMainMenu();
+    }
+    
     private void OnMove(InputValue input)
     {
         ReceivedInput = input.Get<Vector2>();
@@ -227,24 +233,28 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     private void CheckForSpriteUpdates()
     {
-        if (_characterController.DashMaxed)
+        switch (_characterController.DashMaxed)
         {
-            _characterSpriteRenderer.sprite = !_powerActive ? playerCoreB : playerCoreBBlock;
-            _jumpIndicatorSpriteRenderer.sprite = playerCoreBJumpIndicator;
-        }
-        else if (!_characterController.DashMaxed)
-        {
-            _characterSpriteRenderer.sprite = !_powerActive ? playerCoreA : playerCoreABlock;
-            _jumpIndicatorSpriteRenderer.sprite = playerCoreAJumpIndicator;
+            case true:
+                _characterSpriteRenderer.sprite = !_powerActive ? playerCoreB : playerCoreBBlock;
+                _jumpIndicatorSpriteRenderer.sprite = playerCoreBJumpIndicator;
+                break;
+            case false:
+                _characterSpriteRenderer.sprite = !_powerActive ? playerCoreA : playerCoreABlock;
+                _jumpIndicatorSpriteRenderer.sprite = playerCoreAJumpIndicator;
+                break;
         }
 
-        if (_characterController.JumpMaxed)
+        switch (_characterController.JumpMaxed)
         {
-            _jumpIndicatorSpriteRenderer.DOFade(0f, 0.2f);
-        }
-        else
-        {
-            _jumpIndicatorSpriteRenderer.DOFade(255f, 0.2f);
+            case true when _dotIndicatorTweenFlag != 1:
+                _jumpIndicatorSpriteRenderer.DOFade(0f, 0.2f);
+                _dotIndicatorTweenFlag = 1;
+                break;
+            case false when _dotIndicatorTweenFlag != 0:
+                _jumpIndicatorSpriteRenderer.DOFade(255f, 0.2f);
+                _dotIndicatorTweenFlag = 0;
+                break;
         }
     }
 
