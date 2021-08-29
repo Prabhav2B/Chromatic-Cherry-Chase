@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
   m_Name: Text_1 1
   m_EditorClassIdentifier: 
-  controlScheme1Text: Hold [Space] to Jump Higher
-  controlScheme2Text: Hold [BUTTON SOUTH] to Jump Higher
+  controlScheme1Text: HOLD [Space] to Jump Higher & Longer
+  controlScheme2Text: HOLD [BUTTON SOUTH] to Jump Higher & Longer

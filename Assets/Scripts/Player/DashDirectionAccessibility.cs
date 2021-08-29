@@ -35,6 +35,6 @@ public class DashDirectionAccessibility : MonoBehaviour
         var targetRotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
         
         //MIGHT NOT BE THE BEST WAY TO FO IT
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 2f);
     }
 }
