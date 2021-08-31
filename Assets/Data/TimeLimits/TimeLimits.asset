@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: TimeLimits
   m_EditorClassIdentifier: 
   timeLimits:
-  - minutes: 0
-    seconds: 10
+  - minutes: 3
+    seconds: 0
     surveyURL: https://forms.gle/aMh72sNAiQfAn5Bw7
-  - minutes: 0
-    seconds: 10
+  - minutes: 5
+    seconds: 0
     surveyURL: https://forms.gle/aMh72sNAiQfAn5Bw7
-  - minutes: 0
-    seconds: 10
+  - minutes: 7
+    seconds: 0
     surveyURL: https://forms.gle/aMh72sNAiQfAn5Bw7

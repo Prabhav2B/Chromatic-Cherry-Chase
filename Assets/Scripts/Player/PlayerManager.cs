@@ -33,7 +33,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
     public bool PowerActive => _powerActive;
-    
+
+    public Action OnLand;
+    public Action OnSwitch;
 
     public ControlScheme CurrentControlScheme { get; private set; }
 
@@ -161,22 +163,20 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     private void OnPowerA(InputValue input)
     {
-        // if (input.Get<float>() > 0.8f && !_powerInputLock)
-        // {
-        //     _powerActive = !_powerActive;
-        //     _powerInputLock = true;
-        //     SquishStart();
-        //     CheckForSpriteUpdates();
-        // }
-        // else if ( input.Get<float>() < 0.8f )
-        // {
-        //     _powerInputLock = false;
-        //     // SquishStart();
-        //     //CheckForSpriteUpdates();
-        // }
-
         _powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
-         SquishStart();
+
+        if (!_powerInputLock && _powerActive)
+        {
+            OnSwitch();
+            _powerInputLock = true;
+        }
+        else if (_powerInputLock && !_powerActive)
+        {
+            OnSwitch();
+            _powerInputLock = false;
+        }
+
+        SquishStart();
          CheckForSpriteUpdates();
     }
 
@@ -293,6 +293,8 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _particleSystem.gameObject.transform.rotation =
             Quaternion.Euler(new Vector3(0f, 0f, other.contacts[0].normal.x * -90f));
         _particleSystem.Play();
+
+        OnLand?.Invoke();
     }
 
     private void OnCollisionStay2D(Collision2D other)

@@ -67,6 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _collectibleEffect: {fileID: 2965325071136349325, guid: 4148d56c3ae2f9c49b0568d2c85f1340,
     type: 3}
+  _gemAudioClip: {fileID: 8300000, guid: 67ee4aecee3bda34b988a80f9f6fcdf6, type: 3}
 --- !u!1001 &8177823974940512657
 PrefabInstance:
   m_ObjectHideFlags: 0

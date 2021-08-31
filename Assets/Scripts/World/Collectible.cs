@@ -1,9 +1,22 @@
+using System;
 using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
     [SerializeField] private GameObject _collectibleEffect;
+    [SerializeField] private AudioClip _gemAudioClip;
+    
     private CollectibleCounter _collectibleCounter;
+
+    
+    private AudioSource _gemAudio;
+
+    private void Awake()
+    {
+        _gemAudio = FindObjectOfType<LevelResetHandler>().GetComponent<AudioSource>();
+        _gemAudio.loop = false;
+        _gemAudio.spatialBlend = 0f;
+    }
 
     private void Start()
     {
@@ -34,6 +47,7 @@ public class Collectible : MonoBehaviour
         }
 
         _collectibleCounter.onCollectible?.Invoke();
+        _gemAudio.PlayOneShot(_gemAudioClip);
         //Destroy(this.gameObject);
         gameObject.SetActive(false);
     }

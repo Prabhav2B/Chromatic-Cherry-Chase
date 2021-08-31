@@ -44,6 +44,7 @@ public class CharController : MonoBehaviour
     public bool IsStill => _isStill;
     public bool FacingRight => _facingRight;
     public bool OnSteep => _onSteep;
+    public bool OnGround => _onGround;
     public bool OnDownwardSlope => _onDownwardSlope;
     public bool IsDashing => _isDashing;
 
@@ -52,6 +53,10 @@ public class CharController : MonoBehaviour
     {
         set => _externalVelocity = value;
     }
+
+    public Action OnDash;
+    public Action OnJump;
+    public Action OnDoubleJump;
 
     private void Awake()
     {
@@ -298,6 +303,7 @@ public class CharController : MonoBehaviour
 
         if ((_onSteep || _steepProximity) && !_onGround && _slopeDir != (int) _moveVal) //Wall Jump
         {
+            OnJump?.Invoke();
             WallJump();
             return;
         }
@@ -311,6 +317,10 @@ public class CharController : MonoBehaviour
         _jumpVelocity = Mathf.Sqrt(-2f * maxGravityAcceleration * jumpHeight);
         //float alignedVelocity = Vector2.Dot(velocity.normalized, contactNormal); // not completely sure about this
 
+        if(_jumpPhase == 1)
+            OnJump?.Invoke();
+        else if (_jumpPhase == 2)
+            OnDoubleJump?.Invoke();
         if (!Mathf.Approximately(_contactNormal.y, 1f) && _velocity.y > 0) //check if on a upward slope
         {
             _velocity.y += ((_jumpVelocity));
@@ -373,6 +383,8 @@ public class CharController : MonoBehaviour
 
     private IEnumerator Dash()
     {
+        OnDash?.Invoke();
+        
         _isDashing = true;
         
         if (Mathf.Approximately(_dashDir.sqrMagnitude, 0f)) //needs to be recorded before setting velocity to zero
