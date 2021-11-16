@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScreenFadeManager : MonoBehaviour
@@ -25,7 +26,8 @@ public class ScreenFadeManager : MonoBehaviour
         transitionImageColor.a = 1f;
         _transitionImage.color = transitionImageColor;
 
-        //StartCoroutine(StaggeredGameStart());
+        if(SceneManager.GetActiveScene().buildIndex == 1)
+            StartCoroutine(StaggeredGameStart());
     }
 
     public void StaggeredStart()

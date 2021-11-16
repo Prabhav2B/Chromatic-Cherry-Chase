@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
   m_Name: Text_1 3
   m_EditorClassIdentifier: 
-  controlScheme1Text: Hold direction using [ARROW KEYS] and press [SHIFT] to Dash.
+  controlScheme1Text: Hold direction using [WASD] and press [SHIFT] to Dash.
   controlScheme2Text: Hold direction using [Analog Stick] and press [BUTTON WEST]
     to Dash.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
   m_Name: Text_1 4
   m_EditorClassIdentifier: 
-  controlScheme1Text: 'Tap [C] to switch block form and back. Yellow Platforms can
-    only be traversed in Block Form! '
-  controlScheme2Text: 'Tap [RIGHT TRIGGER] to switch block form and back. Yellow
+  controlScheme1Text: 'HOLD [LEFT MOUSE BUTTON] to switch block form and back. Yellow
+    Platforms can only be traversed in Block Form! '
+  controlScheme2Text: 'HOLD [RIGHT TRIGGER] to switch block form and back. Yellow
     Platforms can only be traversed in Block Form! '

@@ -645,7 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eecb9af6a639234c8d57221515358e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 7
+  maxSpeed: 8.5
   maxGravitySpeed: 30
   maxAcceleration: 65
   maxAirAcceleration: 50
@@ -874,11 +874,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa5a1d40c93838b44a8a8fa46ff267c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpAudio: {fileID: 8300000, guid: e5cb0976ee7cf93489107ede5175519b, type: 3}
-  dJumpAudio: {fileID: 8300000, guid: e5cb0976ee7cf93489107ede5175519b, type: 3}
-  dashAudio: {fileID: 8300000, guid: b509f28a39e7d8e4f9d4a8aad77fbc01, type: 3}
+  jumpAudio: {fileID: 8300000, guid: e9f435fd77e5c5a41ba9bbb784cc1016, type: 3}
+  dJumpAudio: {fileID: 8300000, guid: 32c99aea358a0a04182a1e1754014dd7, type: 3}
+  dashAudio: {fileID: 8300000, guid: 14915a1dfd0736a48a8aad104aa88251, type: 3}
   walkAudio: {fileID: 0}
-  landAudio: {fileID: 8300000, guid: ea217dc637f73b649a2866febb99c4a2, type: 3}
+  landAudio: {fileID: 8300000, guid: eeb8b2832cfe1824386968a3e0020f1b, type: 3}
   switchAudio: {fileID: 8300000, guid: 0d96116af793cce48b0edbd2e989d8a3, type: 3}
   _audioSourceOneShot: {fileID: 1858765738}
   _audioSourceLooper: {fileID: 1186878957}
