@@ -54,13 +54,24 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _spriteRendererTransform = _characterSpriteRenderer.transform;
 
         _particleSystem = this.GetComponentInChildren<ParticleSystem>();
-        UpdateCurrentScheme(_input.currentControlScheme);
 
         Deactivate();
     }
 
     private void Start()
     {
+        InputSystem.onActionChange += (obj, change) =>
+        {
+            if (change == InputActionChange.ActionPerformed)
+            {
+                var inputAction = (InputAction) obj;
+                var lastControl = inputAction.activeControl;
+                var lastDevice = lastControl.device;
+                
+                CurrentControlScheme = lastDevice.displayName.Equals("Xbox Controller") ? ControlScheme.Gamepad : ControlScheme.KeyboardAndMouse;
+            }
+        };
+        
         _initalPosition = transform.position;
         _movementTweenFlag = -1;
     }
@@ -68,7 +79,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
     protected override void OnEnable()
     {
         base.OnEnable();
-        InputUser.onChange += onInputDeviceChange;
         _levelResetHandler.onLevelReload += _characterController.ClearState;
         _levelResetHandler.onLevelReload += ResetPlayerPosition;
     }
@@ -76,7 +86,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
     protected override void OnDisable()
     {
         base.OnDisable();
-        InputUser.onChange -= onInputDeviceChange;
         _levelResetHandler.onLevelReload -= _characterController.ClearState;
         _levelResetHandler.onLevelReload -= ResetPlayerPosition;
     }
@@ -96,34 +105,22 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         transform.position = _initalPosition;
     }
+    
 
-    private void onInputDeviceChange(InputUser user, InputUserChange change, InputDevice device)
-    {
-        if (change == InputUserChange.ControlSchemeChanged)
-        {
-            if (user.controlScheme != null) UpdateCurrentScheme(user.controlScheme.Value.name);
-        }
-    }
-
-    private void UpdateCurrentScheme(string schemeName)
-    {
-        CurrentControlScheme = schemeName.Equals("Gamepad") ? ControlScheme.Gamepad : ControlScheme.KeyboardAndMouse;
-    }
-
-    private void OnMainMenu(InputValue input)
+    public void OnMainMenu(InputAction.CallbackContext context)
     {
        _mainMenu.TriggerMainMenu();
     }
     
-    private void OnMove(InputValue input)
+    public void OnMove(InputAction.CallbackContext context)
     {
-        ReceivedInput = input.Get<Vector2>();
+        ReceivedInput = context.ReadValue<Vector2>();
         //PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         _characterController.Move(ReceivedInput);
     }
-    private void OnJump(InputValue input)
+    public void OnJump(InputAction.CallbackContext context)
     {
-        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
         {
             _characterController.JumpInitiate();
             if (!_characterController.JumpMaxed)
@@ -147,13 +144,11 @@ public class PlayerManager : SingleInstance<PlayerManager>
     //     }
     // }
 
-    private void OnDash(InputValue input)
+    public void OnDash(InputAction.CallbackContext context)
     {
-        if (Math.Abs(input.Get<float>() - 1f) < 0.5f)
+        if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
         {
             _characterController.DashInitiate();
-            //if(!characterController.JumpMaxed)
-            //SquishStart();
         }
         else
         {
@@ -161,9 +156,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
-    private void OnPowerA(InputValue input)
+    public void OnPowerA(InputAction.CallbackContext context)
     {
-        _powerActive = Math.Abs(input.Get<float>() - 1f) < 0.5f;
+        _powerActive = Math.Abs(context.ReadValue<float>() - 1f) < 0.5f;
 
         if (!_powerInputLock && _powerActive)
         {
