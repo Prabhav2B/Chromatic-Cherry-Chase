@@ -245,7 +245,7 @@
                 {
                     "name": "",
                     "id": "3b3ec556-e372-4881-ad55-291e219e71e1",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",
@@ -278,7 +278,7 @@
                 {
                     "name": "",
                     "id": "da5c5252-49c1-4aa6-95c3-960ff2767042",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardAndMouse",

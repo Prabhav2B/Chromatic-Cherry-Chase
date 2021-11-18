@@ -48,12 +48,15 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Scenes/ShieldAndShoot.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/PlayGround.unity
     guid: 0ab13427d8c27204e8a66753723a4730
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/TestScene1.unity
-    guid: 229159b04a0d35042a93df722bb9bdeb
+    path: Assets/Scenes/MainLevel.unity
+    guid: 7b485a075639b7d49a4ecfc476e8e862
   m_configObjects: {}
