@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 public class CharController : MonoBehaviour
@@ -35,6 +36,7 @@ public class CharController : MonoBehaviour
     private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer, _stepsSinceCoyoteFlag;
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
+    private Camera _mainCam;
 
     private const int JumpBufferFrames = 8;
     private const int CoyoteFlagFrames = 10;
@@ -49,6 +51,11 @@ public class CharController : MonoBehaviour
     public bool IsDashing => _isDashing;
 
 
+    public Vector2 DashDir
+    {
+        set => _dashDir = value;
+    }
+
     public Vector2 ExternalVelocity
     {
         set => _externalVelocity = value;
@@ -61,6 +68,7 @@ public class CharController : MonoBehaviour
     private void Awake()
     {
         _rb = this.GetComponent<Rigidbody2D>();
+        _mainCam = Camera.main;
         OnValidate();
     }
 
@@ -86,7 +94,7 @@ public class CharController : MonoBehaviour
 
     public void Move(Vector2 moveVector)
     {
-        _dashDir = moveVector;
+        //_dashDir = moveVector;
         this._moveVal = Mathf.Round(moveVector.x); // Lock this while wall jumping
     }
 
@@ -102,7 +110,69 @@ public class CharController : MonoBehaviour
 
     public void DashInitiate()
     {
+        DashDir = ComputeDashDirection();
         _desiredDash = true;
+    }
+
+    private Vector2 ComputeDashDirection()
+    {
+        var mousePosition = Vector3.Scale(_mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue()), new Vector3(1f, 1f, 0f));
+        var vectorFromCharacterToMouse = mousePosition - transform.position;
+
+        var angleCounterClockwise = SignedAngleBetween(Vector3.left, vectorFromCharacterToMouse, Vector3.forward);
+        var sector = (int) (angleCounterClockwise / 45f);
+        var offset = angleCounterClockwise % 45f;
+
+        sector = offset > (45 / 2f) ? (sector + 1) % 8 : sector;
+
+        Vector2 pointerDir = Vector2.zero;
+        
+        switch (sector)         
+        {
+            case 0:
+                pointerDir = Vector2.right;
+                break;
+            case 1:
+                pointerDir = new Vector2(1, 1);
+                break;
+            case 2:
+                pointerDir = Vector2.up;
+                break;
+            case 3:
+                pointerDir = new Vector2(-1, 1);
+                break;
+            case 4:
+                pointerDir = Vector2.left;
+                break;
+            case 5:
+                pointerDir = new Vector2(-1, -1);
+                break;
+            case 6:
+                pointerDir = Vector2.down;
+                break;
+            case 7:
+                pointerDir = new Vector2(1, -1);
+                break;
+            default:
+                pointerDir = Vector2.zero;
+                break;
+        }
+
+        return pointerDir;
+    }
+    
+    private float SignedAngleBetween(Vector3 a, Vector3 b, Vector3 n){
+        // angle in [0,180]
+        float angle = Vector3.Angle(a,b);
+        float sign = Mathf.Sign(Vector3.Dot(n,Vector3.Cross(a,b)));
+
+        // angle in [-179,180]
+        float signed_angle = angle * sign;
+
+        // angle in [0,360] (not used but included here for completeness)
+        float angle360 =  (signed_angle + 180) % 360;
+
+        return angle360;
     }
 
     public void DashEnd()

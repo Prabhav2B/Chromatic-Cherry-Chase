@@ -146,14 +146,28 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
+        
+        if (context.performed) 
         {
+            _timeBend.TimeBendInitiate();
+        }
+        
+        if (context.canceled)
+        {
+            _timeBend.TimeBendEnd();
             _characterController.DashInitiate();
         }
-        else
-        {
-            _characterController.DashEnd();
-        }
+        
+        // _timeBend.TimeBendEnd();
+        // if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
+        // {
+        //     Debug.Log("Held");
+        //     _characterController.DashInitiate();
+        // }
+        // else
+        // {
+        //     _characterController.DashEnd();
+        // }
     }
 
     public void OnPowerA(InputAction.CallbackContext context)
