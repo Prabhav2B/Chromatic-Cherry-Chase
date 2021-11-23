@@ -114,7 +114,7 @@ public class CharController : MonoBehaviour
         _desiredDash = true;
     }
 
-    private Vector2 ComputeDashDirection()
+    public int ComputeDashSector()
     {
         var mousePosition = Vector3.Scale(_mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue()), new Vector3(1f, 1f, 0f));
         var vectorFromCharacterToMouse = mousePosition - transform.position;
@@ -125,38 +125,25 @@ public class CharController : MonoBehaviour
 
         sector = offset > (45 / 2f) ? (sector + 1) % 8 : sector;
 
-        Vector2 pointerDir = Vector2.zero;
-        
-        switch (sector)         
+        return sector;
+    }
+
+    private Vector2 ComputeDashDirection()
+    {
+        var sector = ComputeDashSector();
+
+        Vector2 pointerDir = sector switch
         {
-            case 0:
-                pointerDir = Vector2.right;
-                break;
-            case 1:
-                pointerDir = new Vector2(1, 1);
-                break;
-            case 2:
-                pointerDir = Vector2.up;
-                break;
-            case 3:
-                pointerDir = new Vector2(-1, 1);
-                break;
-            case 4:
-                pointerDir = Vector2.left;
-                break;
-            case 5:
-                pointerDir = new Vector2(-1, -1);
-                break;
-            case 6:
-                pointerDir = Vector2.down;
-                break;
-            case 7:
-                pointerDir = new Vector2(1, -1);
-                break;
-            default:
-                pointerDir = Vector2.zero;
-                break;
-        }
+            0 => Vector2.right,
+            1 => new Vector2(1, 1),
+            2 => Vector2.up,
+            3 => new Vector2(-1, 1),
+            4 => Vector2.left,
+            5 => new Vector2(-1, -1),
+            6 => Vector2.down,
+            7 => new Vector2(1, -1),
+            _ => Vector2.zero
+        };
 
         return pointerDir;
     }

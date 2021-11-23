@@ -29,10 +29,13 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private ScreenFadeManager _screenFadeManager;
     private MainMenu _mainMenu;
     private Vector3 _initalPosition;
+    private bool _dashInputHeld;
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
     public bool PowerActive => _powerActive;
+
+    public bool DashInputHeld => _dashInputHeld;
 
     public Action OnLand;
     public Action OnSwitch;
@@ -147,13 +150,15 @@ public class PlayerManager : SingleInstance<PlayerManager>
     public void OnDash(InputAction.CallbackContext context)
     {
         
-        if (context.performed) 
+        if (context.performed)
         {
+            _dashInputHeld = true;
             _timeBend.TimeBendInitiate();
         }
         
         if (context.canceled)
         {
+            _dashInputHeld = false;
             _timeBend.TimeBendEnd();
             _characterController.DashInitiate();
         }
