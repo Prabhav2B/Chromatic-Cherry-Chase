@@ -101,7 +101,7 @@ public class GameTimer : SingleInstance<GameTimer>
     {
         while (_currentTime > 0 && !_stopTimer)
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSecondsRealtime(1.0f);
             _currentTime--;
             onTimerTick?.Invoke();
             timerImage.fillAmount = _currentTime / _totalTime;

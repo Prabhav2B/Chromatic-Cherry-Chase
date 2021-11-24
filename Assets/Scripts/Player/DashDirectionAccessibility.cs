@@ -20,7 +20,7 @@ public class DashDirectionAccessibility : MonoBehaviour
     private void Update()
     {
         Color col;
-        if (!_playerManager.DashInputHeld)
+        if (!_playerManager.DashInputHeld || _characterController.DashMaxed)
         {
             col = _indicatorSprite.color;
             col.a = 0f;

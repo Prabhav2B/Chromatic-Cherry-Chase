@@ -29,7 +29,8 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private ScreenFadeManager _screenFadeManager;
     private MainMenu _mainMenu;
     private Vector3 _initalPosition;
-    private bool _dashInputHeld;
+    private bool _dashInputHeld, _dashInputLock;
+    private float _dashTimer, _dashTimerMax;
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
@@ -70,13 +71,17 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 var inputAction = (InputAction) obj;
                 var lastControl = inputAction.activeControl;
                 var lastDevice = lastControl.device;
-                
-                CurrentControlScheme = lastDevice.displayName.Equals("Xbox Controller") ? ControlScheme.Gamepad : ControlScheme.KeyboardAndMouse;
+
+                CurrentControlScheme = lastDevice.displayName.Equals("Xbox Controller")
+                    ? ControlScheme.Gamepad
+                    : ControlScheme.KeyboardAndMouse;
             }
         };
-        
+
         _initalPosition = transform.position;
         _movementTweenFlag = -1;
+        _dashTimer = 0f;
+        _dashTimerMax = 2f;
     }
 
     protected override void OnEnable()
@@ -92,7 +97,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _levelResetHandler.onLevelReload -= _characterController.ClearState;
         _levelResetHandler.onLevelReload -= ResetPlayerPosition;
     }
-    
+
     public void ResetScene()
     {
         Deactivate(); //Turn of input from user
@@ -108,19 +113,20 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         transform.position = _initalPosition;
     }
-    
+
 
     public void OnMainMenu(InputAction.CallbackContext context)
     {
-       _mainMenu.TriggerMainMenu();
+        _mainMenu.TriggerMainMenu();
     }
-    
+
     public void OnMove(InputAction.CallbackContext context)
     {
         ReceivedInput = context.ReadValue<Vector2>();
         //PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         _characterController.Move(ReceivedInput);
     }
+
     public void OnJump(InputAction.CallbackContext context)
     {
         if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
@@ -149,30 +155,23 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        
         if (context.performed)
         {
             _dashInputHeld = true;
-            _timeBend.TimeBendInitiate();
+            if (!_characterController.DashMaxed)
+                _timeBend.TimeBendInitiate();
         }
-        
+
         if (context.canceled)
         {
             _dashInputHeld = false;
+            _dashTimer = 0f;
+            
             _timeBend.TimeBendEnd();
+            
             _characterController.DashInitiate();
         }
-        
-        // _timeBend.TimeBendEnd();
-        // if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
-        // {
-        //     Debug.Log("Held");
-        //     _characterController.DashInitiate();
-        // }
-        // else
-        // {
-        //     _characterController.DashEnd();
-        // }
+
     }
 
     public void OnPowerA(InputAction.CallbackContext context)
@@ -191,7 +190,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
 
         SquishStart();
-         CheckForSpriteUpdates();
+        CheckForSpriteUpdates();
     }
 
     void Update()
@@ -240,6 +239,16 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
             rateOverTime.minCount = 5;
             rateOverTime.maxCount = 15;
+        }
+
+        if (DashInputHeld)
+        {
+            _dashTimer += Time.unscaledDeltaTime;
+            if ((_dashTimer > _dashTimerMax))
+            {
+                _dashTimer = 0f;
+                _timeBend.TimeBendEnd();
+            }
         }
 
         CheckForSpriteUpdates();
