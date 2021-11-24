@@ -38,7 +38,6 @@ public class DashDirectionAccessibility : MonoBehaviour
 
         int directionAsSector = _characterController.ComputeDashSector();
 
-
         float pointerDir = directionAsSector switch
         {
             0 => 0f,
