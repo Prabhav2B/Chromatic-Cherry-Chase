@@ -15,11 +15,14 @@ public class PlayerManager : SingleInstance<PlayerManager>
     [SerializeField] private Sprite playerCoreBBlock;
     [SerializeField] private Sprite playerCoreBJumpIndicator;
 
+    [SerializeField] private float _dashTimerMax = 1.5f;
+
     private SpriteRenderer _characterSpriteRenderer;
     private ParticleSystem _particleSystem;
     private SpriteRenderer _jumpIndicatorSpriteRenderer;
     private Transform _spriteRendererTransform;
     private CharController _characterController;
+    private DashTimerCanvas _dashTimerCanvas;
     private TimeBend _timeBend;
     private Vector3 _lastCollisionPoint;
     private float _lastCollisionNormal;
@@ -29,14 +32,16 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private ScreenFadeManager _screenFadeManager;
     private MainMenu _mainMenu;
     private Vector3 _initalPosition;
-    private bool _dashInputHeld, _dashInputLock;
-    private float _dashTimer, _dashTimerMax;
+    private bool _dashInputHeld, _dashTimerExceeded;
+    private float _dashTimer;
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
     public bool PowerActive => _powerActive;
 
     public bool DashInputHeld => _dashInputHeld;
+
+    public bool DashViable => !_dashTimerExceeded || _characterController.OnGround;
 
     public Action OnLand;
     public Action OnSwitch;
@@ -50,8 +55,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
         _characterController = GetComponent<CharController>();
         _timeBend = GetComponent<TimeBend>();
+        _dashTimerCanvas = GetComponentInChildren<DashTimerCanvas>();
         _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
         _mainMenu = FindObjectOfType<MainMenu>();
+        
 
         _characterSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[0];
         _jumpIndicatorSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[1];
@@ -81,7 +88,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _initalPosition = transform.position;
         _movementTweenFlag = -1;
         _dashTimer = 0f;
-        _dashTimerMax = 2f;
     }
 
     protected override void OnEnable()
@@ -155,21 +161,26 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !_characterController.DashMaxed)
         {
+            _dashTimer = 0f;
             _dashInputHeld = true;
-            if (!_characterController.DashMaxed)
+            _dashTimerExceeded = false;
+            if (!_characterController.OnGround)
+            {
+                _dashTimerCanvas.Activate();
                 _timeBend.TimeBendInitiate();
+            }
         }
 
-        if (context.canceled)
+        if (context.canceled && _dashInputHeld)
         {
+            _dashTimerCanvas.Deactivate();
             _dashInputHeld = false;
             _dashTimer = 0f;
-            
             _timeBend.TimeBendEnd();
-            
-            _characterController.DashInitiate();
+            if(DashViable)
+                _characterController.DashInitiate();
         }
 
     }
@@ -243,9 +254,12 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
         if (DashInputHeld)
         {
+            _dashTimerCanvas.DashFillAmount = 1.0f - (_dashTimer / _dashTimerMax);
             _dashTimer += Time.unscaledDeltaTime;
-            if ((_dashTimer > _dashTimerMax))
+            if (_dashTimer > _dashTimerMax)
             {
+                _dashTimerCanvas.Deactivate();
+                _dashTimerExceeded = true;
                 _dashTimer = 0f;
                 _timeBend.TimeBendEnd();
             }

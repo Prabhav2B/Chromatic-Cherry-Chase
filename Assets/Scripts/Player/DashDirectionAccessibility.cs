@@ -20,7 +20,7 @@ public class DashDirectionAccessibility : MonoBehaviour
     private void Update()
     {
         Color col;
-        if (!_playerManager.DashInputHeld || _characterController.DashMaxed)
+        if (!_playerManager.DashInputHeld || _characterController.DashMaxed || !_playerManager.DashViable)
         {
             col = _indicatorSprite.color;
             col.a = 0f;
@@ -51,9 +51,9 @@ public class DashDirectionAccessibility : MonoBehaviour
             _ => 0
         };
 
-        //var targetRotation = Quaternion.Euler(new Vector3(0f, 0f, pointerDir + 180f));
+        var targetRotation = Quaternion.Euler(new Vector3(0f, 0f, pointerDir + 180f));
         //MIGHT NOT BE THE BEST WAY TO FO IT
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 800f * Time.deltaTime);
-        transform.rotation = Quaternion.Euler(0, 0, pointerDir + 180);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 800f * Time.unscaledDeltaTime);
+        //transform.rotation = Quaternion.Euler(0, 0, pointerDir + 180);
     }
 }
