@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5fd38b38fd3c247b667549ce33a0ee, type: 3}
   m_Name: Text_1 2
   m_EditorClassIdentifier: 
-  controlScheme1Text: 'Jump while mid-air to Double Jump. Notice the Dot Indicator. '
-  controlScheme2Text: 'Jump while mid-air to Double Jump. Notice the Dot Indicator. '
+  controlScheme1Text: Jump while mid-air to Double Jump. Notice the <color=#e3535a>Dot
+    Indicator. </color>
+  controlScheme2Text: Jump while mid-air to Double Jump. Notice the <color=#e3535a>Dot
+    Indicator. </color>
