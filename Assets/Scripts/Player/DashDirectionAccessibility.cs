@@ -8,7 +8,8 @@ public class DashDirectionAccessibility : MonoBehaviour
     private SpriteRenderer _indicatorSprite;
     private PlayerManager _playerManager;
     private CharController _characterController;
-    private float zRotation;
+    private bool reset = false;
+    
 
     private void Awake()
     {
@@ -25,7 +26,30 @@ public class DashDirectionAccessibility : MonoBehaviour
             col = _indicatorSprite.color;
             col.a = 0f;
             _indicatorSprite.color = col;
+            reset = true;
             return;
+        }
+        else
+        {
+            if (reset)
+            {
+                reset = false;
+                
+                var startPointerDir = _characterController.ComputeDashSector() switch
+                {
+                    0 => 0f,
+                    1 => 45f,
+                    2 => 90f,
+                    3 => 135f,
+                    4 => 180f,
+                    5 => 225f,
+                    6 => 270f,
+                    7 => 315f,
+                    _ => 0
+                };
+                
+                transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, startPointerDir + 180f));
+            }
         }
 
         col = _indicatorSprite.color;
@@ -36,9 +60,9 @@ public class DashDirectionAccessibility : MonoBehaviour
         //Vector3 cross = Vector3.Cross(_playerManager.ReceivedInput, Vector3.right).normalized;
         
 
-        int directionAsSector = _characterController.ComputeDashSector();
+        var directionAsSector = _characterController.ComputeDashSector();
 
-        float pointerDir = directionAsSector switch
+        var pointerDir = directionAsSector switch
         {
             0 => 0f,
             1 => 45f,

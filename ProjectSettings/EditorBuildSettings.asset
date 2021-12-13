@@ -56,16 +56,19 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainLevel.unity
     guid: 7b485a075639b7d49a4ecfc476e8e862
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestScenes/Goal Only.unity
     guid: fee358df8afb4b7458e10fc614eda788
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TestScenes/Timer Only.unity
     guid: bb771739cf4e71c4b8ae698472cbb3e4
   - enabled: 1
     path: Assets/Scenes/TestScenes/TimerAndGoal.unity
     guid: 65ddeb9dac3503e4c812b12a72e907e3
+  - enabled: 0
+    path: Assets/Scenes/TestScenes/CuriosityBased.unity
+    guid: a22a458979cd2b14a942188e3031c57e
   m_configObjects: {}

@@ -13546,7 +13546,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<color=#8a4af3>Geysers</color> give you momentum when you enter them!
+  m_text: '<color=#B800CD>Geysers</color> give you momentum when you enter them!
 
 '
   m_isRightToLeft: 0
@@ -105818,7 +105818,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Combine <color=#c71fff>DOUBLE JUMP</color> and <color=#5262bc>DASH</color>
+  m_text: 'Combine <color=#B800CD>DOUBLE JUMP</color> and <color=#5262bc>DASH</color>
     to cover large Distances.
 
 '

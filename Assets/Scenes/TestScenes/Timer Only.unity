@@ -17844,7 +17844,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Explore these vast ruins and find as many diamonds as you can!
+  m_text: '<color=#ffc107>Explore</color> these vast ruins and find as many <color=#42d2dc>diamonds</color>
+    as you can!  '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e85f1cf0bfd4d1447bed2bc737c47be7, type: 2}
   m_sharedMaterial: {fileID: 21069318434546836, guid: e85f1cf0bfd4d1447bed2bc737c47be7,

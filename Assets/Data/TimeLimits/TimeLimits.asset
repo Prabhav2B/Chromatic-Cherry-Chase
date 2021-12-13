@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: TimeLimits
   m_EditorClassIdentifier: 
   timeLimits:
-  - minutes: 9
+  - minutes: 6
     seconds: 0
     surveyURL: https://forms.gle/g674nnNJ1jxpEPqr9

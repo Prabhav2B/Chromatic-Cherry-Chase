@@ -17697,7 +17697,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Find the MYSTIC GEM at the end of 5 rooms before the TIMER runs out.
+  m_text: Find the <color=#ffc107>MYSTIC GEM</color> at the end of <color=#42d2dc>5
+    Rooms</color> before the <color=#f5554a>TIMER</color> runs out.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e85f1cf0bfd4d1447bed2bc737c47be7, type: 2}
   m_sharedMaterial: {fileID: 21069318434546836, guid: e85f1cf0bfd4d1447bed2bc737c47be7,
@@ -17761,7 +17762,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -311.0971, y: 0, z: -219.29794, w: 0}
+  m_margin: {x: -311.09695, y: 0, z: -235.80267, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
