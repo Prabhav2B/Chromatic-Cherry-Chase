@@ -8,15 +8,16 @@ public abstract class SingleInstance<T> : MonoBehaviour
     protected LevelResetHandler _levelResetHandler;
     protected virtual void Awake()
     {
-        Debug.Assert(!_instantiated, this.gameObject);
+        //Debug.Assert(!_instantiated, this.gameObject);
         if (_instantiated)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         _instantiated = true;
 
         _levelResetHandler = FindObjectOfType<LevelResetHandler>();
+        _levelResetHandler.onLevelEnd += DestroyInstance;
     }
 
     protected virtual void OnEnable()

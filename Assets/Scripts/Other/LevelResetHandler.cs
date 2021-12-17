@@ -16,7 +16,7 @@ public class LevelResetHandler : MonoBehaviour
         //Debug.Assert(!_instantiated, this.gameObject);
         if (_instantiated)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         _instantiated = true;

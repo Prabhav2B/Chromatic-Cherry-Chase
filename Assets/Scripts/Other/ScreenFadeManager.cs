@@ -26,7 +26,7 @@ public class ScreenFadeManager : MonoBehaviour
         transitionImageColor.a = 1f;
         _transitionImage.color = transitionImageColor;
 
-        if(SceneManager.GetActiveScene().buildIndex != 0)
+        if(SceneManager.GetActiveScene().buildIndex % 2 != 0)
             StartCoroutine(StaggeredGameStart());
     }
 

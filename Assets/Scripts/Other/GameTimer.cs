@@ -76,6 +76,7 @@ public class GameTimer : SingleInstance<GameTimer>
     {
         base.OnDisable();
         _levelResetHandler.onLevelReload -= ResetTimer;
+        
         onTimerExpired -= _endCardManager.Activate;
         onTimerExpired -= _screenFadeManager.FadeOut;
         onTimerExpired -= _playerManager.Deactivate;

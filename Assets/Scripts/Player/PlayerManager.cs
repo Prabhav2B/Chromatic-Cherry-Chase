@@ -30,6 +30,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private int _movementTweenFlag, _dotIndicatorTweenFlag;
     private PlayerInput _input;
     private ScreenFadeManager _screenFadeManager;
+    private SceneTransitionManagement _sceneTransitionManagement;
     private MainMenu _mainMenu;
     private Vector3 _initalPosition;
     private bool _dashInputHeld, _dashTimerExceeded;
@@ -57,14 +58,15 @@ public class PlayerManager : SingleInstance<PlayerManager>
         _timeBend = GetComponent<TimeBend>();
         _dashTimerCanvas = GetComponentInChildren<DashTimerCanvas>();
         _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
+        _sceneTransitionManagement = FindObjectOfType<SceneTransitionManagement>();
         _mainMenu = FindObjectOfType<MainMenu>();
-        
 
-        _characterSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[0];
-        _jumpIndicatorSpriteRenderer = this.GetComponentsInChildren<SpriteRenderer>()[1];
+
+        _characterSpriteRenderer = GetComponentsInChildren<SpriteRenderer>()[0];
+        _jumpIndicatorSpriteRenderer = GetComponentsInChildren<SpriteRenderer>()[1];
         _spriteRendererTransform = _characterSpriteRenderer.transform;
 
-        _particleSystem = this.GetComponentInChildren<ParticleSystem>();
+        _particleSystem = GetComponentInChildren<ParticleSystem>();
 
         Deactivate();
     }
@@ -179,10 +181,48 @@ public class PlayerManager : SingleInstance<PlayerManager>
             _dashInputHeld = false;
             _dashTimer = 0f;
             _timeBend.TimeBendEnd();
-            if(DashViable)
+            if (DashViable)
                 _characterController.DashInitiate();
         }
+    }
 
+    public void OnSkipForward(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
+            var _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
+
+            if (_sceneTransitionManagement.IsInvalidSceneTransition(1))
+                return;
+
+            ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelEnd;
+            SceneTransitionManagement s = FindObjectOfType<SceneTransitionManagement>();
+            fadeOutAction += s.LoadNextLevel;
+            _screenFadeManager.FadeOut(fadeOutAction);
+            _levelResetHandler.onLevelReload = null;
+            fadeOutAction = null;
+        }
+    }
+
+    public void OnSkipBackward(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
+            var _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
+
+            if (_sceneTransitionManagement.IsInvalidSceneTransition(-1))
+                return;
+
+
+            ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelEnd;
+            SceneTransitionManagement s = FindObjectOfType<SceneTransitionManagement>();
+            fadeOutAction += s.LoadLastLevel;
+            _screenFadeManager.FadeOut(fadeOutAction);
+            _levelResetHandler.onLevelReload = null;
+            fadeOutAction = null;
+        }
     }
 
     public void OnPowerA(InputAction.CallbackContext context)

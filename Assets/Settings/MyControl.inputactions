@@ -52,6 +52,22 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "SkipForward",
+                    "type": "Button",
+                    "id": "f954498c-759c-4964-94f7-1647883fbea3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "SkipBackwards",
+                    "type": "Button",
+                    "id": "b86a5861-bb75-4986-bca5-ca5225b72a14",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -316,6 +332,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "MainMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "838c67aa-2ff6-4371-aeb8-fdb534b2696b",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipForward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "98592f4a-47ed-452c-ba12-85a58aa938df",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipBackwards",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
