@@ -22,25 +22,33 @@ public class MainMenu : MonoBehaviour
 
     public void TriggerMainMenu()
     {
-        _menuActive = !_menuActive;
-
-        if (_menuActive)
+        
+        
+        if (!_menuActive)
         {
+            _menuActive = !_menuActive;
+
+            DOTween.Kill(transitionImage);
             AudioListener.pause = true;
             var tScale = Time.timeScale;
             DOTween.To(() => tScale, x => Time.timeScale = x, 0f, 0.5f).SetUpdate((true));
-            transitionImage.DOFade(.95f, fadeInDuration).SetUpdate(true).OnComplete(ActiveMainMenu);
+            transitionImage.DOFade(.95f, fadeInDuration).SetUpdate(true).OnComplete(ActivateMainMenu);
             _playerManager.Deactivate();
+
         }
         else
         {
+            _menuActive = !_menuActive;
+            
+            DOTween.Kill(transitionImage);
             AudioListener.pause = false;
             var tScale = Time.timeScale;
             DOTween.To(() => tScale, x => Time.timeScale = x, 1f, 0.5f).SetUpdate(true);
-            DeactiveMainMenu();
+            DeactivateMainMenu();
             transitionImage.DOFade(0f, fadeInDuration).SetUpdate(true);
             _playerManager.Activate();
         }
+        
     }
 
     public void QuitApplication()
@@ -48,12 +56,12 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
-    private void ActiveMainMenu()
+    private void ActivateMainMenu()
     {
         mainMenuUI.SetActive(true);
     }
 
-    private void DeactiveMainMenu()
+    private void DeactivateMainMenu()
     {
         mainMenuUI.SetActive(false);
     }

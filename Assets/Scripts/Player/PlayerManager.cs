@@ -38,6 +38,8 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     protected Vector2 MoveVector;
     public Vector2 ReceivedInput { get; private set; }
+    public bool Paused { get; private set; }
+    public bool InputLock { get; private set; }
     public bool PowerActive => _powerActive;
 
     public bool DashInputHeld => _dashInputHeld;
@@ -108,7 +110,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void ResetScene()
     {
-        Deactivate(); //Turn of input from user
+        Deactivate(); //Turn off input from user
         ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelReload;
         fadeOutAction += _screenFadeManager.FadeIn;
         fadeOutAction += Activate;
@@ -125,11 +127,17 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnMainMenu(InputAction.CallbackContext context)
     {
+        if(!context.performed || InputLock)
+            return;
+        
         _mainMenu.TriggerMainMenu();
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         ReceivedInput = context.ReadValue<Vector2>();
         //PlayerInput = Vector2.ClampMagnitude(PlayerInput, 1f);
         _characterController.Move(ReceivedInput);
@@ -137,6 +145,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         if (Math.Abs(context.ReadValue<float>() - 1f) < 0.5f)
         {
             _characterController.JumpInitiate();
@@ -163,6 +174,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnDash(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         if (context.performed && !_characterController.DashMaxed)
         {
             _dashTimer = 0f;
@@ -188,6 +202,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnSkipForward(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         if (context.performed)
         {
             var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
@@ -201,12 +218,15 @@ public class PlayerManager : SingleInstance<PlayerManager>
             fadeOutAction += s.LoadNextLevel;
             _screenFadeManager.FadeOut(fadeOutAction);
             _levelResetHandler.onLevelReload = null;
-            fadeOutAction = null;
+            //fadeOutAction = null;
         }
     }
 
     public void OnSkipBackward(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         if (context.performed)
         {
             var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
@@ -227,6 +247,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnPowerA(InputAction.CallbackContext context)
     {
+        if(Paused || InputLock)
+            return;
+        
         _powerActive = Math.Abs(context.ReadValue<float>() - 1f) < 0.5f;
 
         if (!_powerInputLock && _powerActive)
@@ -405,11 +428,21 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void Deactivate()
     {
-        GetComponent<PlayerInput>().enabled = false;
+        Paused = true;
     }
 
     public void Activate()
     {
-        GetComponent<PlayerInput>().enabled = true;
+        Paused = false;
+    }
+    
+    public void LockInput()
+    {
+        InputLock = true;
+    }
+
+    public void UnlockInput()
+    {
+        InputLock = false;
     }
 }

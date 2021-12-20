@@ -12,12 +12,21 @@ public abstract class SingleInstance<T> : MonoBehaviour
         if (_instantiated)
         {
             Destroy(gameObject);
+            return;
         }
 
         _instantiated = true;
 
-        _levelResetHandler = FindObjectOfType<LevelResetHandler>();
-        _levelResetHandler.onLevelEnd += DestroyInstance;
+       
+        var instances = FindObjectsOfType<LevelResetHandler>(false);
+        foreach (var instance in instances)
+        {
+            if (!instance.IsStaticInstance) continue;
+            _levelResetHandler = instance;
+            break;
+        }
+        _levelResetHandler.enabled = true;
+        //_levelResetHandler.onLevelEnd += DestroyInstance;
     }
 
     protected virtual void OnEnable()
@@ -34,6 +43,6 @@ public abstract class SingleInstance<T> : MonoBehaviour
     {
         _instantiated = false;
         this.enabled = false;
-        Destroy(this);
+        //Destroy(this);
     }
 }
