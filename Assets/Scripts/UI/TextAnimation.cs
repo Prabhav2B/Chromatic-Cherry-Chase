@@ -11,14 +11,14 @@ using UnityEngine;
 public class TextAnimation : MonoBehaviour
 {
     [SerializeField] private TMP_Text _UIText;
-    private TutorialUIUpdate _updater;
+    private ControlSchemeChangeBroadcaster _updater;
     private void Start()
     {
         StartTextAnim_1();
     }
     private void OnEnable()
     {
-        _updater = GetComponentInParent<TutorialUIUpdate>(); 
+        _updater = GetComponentInParent<ControlSchemeChangeBroadcaster>(); 
         _updater.onControlSchemeChange += StartTextAnim_1;
     }
     

@@ -32,10 +32,12 @@ public class CharController : MonoBehaviour
     private bool _steepProximity, _pushingSteep;
     private bool _fastFall;
     private bool _facingRight, _isStill;
+    private bool _isGamePad;
     private int _jumpPhase, _dashPhase, _slopeDir, _jumpCount;
     private int _stepsSinceLastJump, _stepsSinceLastDash, _stepsSinceJumpBuffer, _stepsSinceCoyoteFlag;
     private float _minGroundDotProduct;
     private CinemachineImpulseSource _impulseSource;
+    private ControlSchemeChangeBroadcaster _updater;
     private Camera _mainCam;
 
     private const int JumpBufferFrames = 8;
@@ -70,6 +72,17 @@ public class CharController : MonoBehaviour
         _rb = this.GetComponent<Rigidbody2D>();
         _mainCam = Camera.main;
         OnValidate();
+    }
+
+    private void OnEnable()
+    {
+        _updater = FindObjectOfType<ControlSchemeChangeBroadcaster>(); 
+        _updater.onControlSchemeChange += UpdateCurrentControlScheme;
+    }
+
+    private void OnDisable()
+    {
+        _updater.onControlSchemeChange -= UpdateCurrentControlScheme;
     }
 
     private void Start()
@@ -116,10 +129,22 @@ public class CharController : MonoBehaviour
 
     public int ComputeDashSector()
     {
-        var mousePosition = Vector3.Scale(_mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue()), new Vector3(1f, 1f, 0f));
-        var vectorFromCharacterToMouse = mousePosition - transform.position;
+        Vector3 directionVector;
 
-        var angleCounterClockwise = SignedAngleBetween(Vector3.left, vectorFromCharacterToMouse, Vector3.forward);
+        if (_isGamePad)
+        {
+            directionVector = Gamepad.current.leftStick.ReadValue();
+        }
+        else
+        {
+            var mousePosition = Vector3.Scale(_mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue()),
+                new Vector3(1f, 1f, 0f));
+            directionVector = mousePosition - transform.position;
+        }
+
+
+
+        var angleCounterClockwise = SignedAngleBetween(Vector3.left, directionVector, Vector3.forward);
         var sector = (int) (angleCounterClockwise / 45f);
         var offset = angleCounterClockwise % 45f;
 
@@ -148,7 +173,7 @@ public class CharController : MonoBehaviour
         return pointerDir;
     }
     
-    private float SignedAngleBetween(Vector3 a, Vector3 b, Vector3 n){
+    private static float SignedAngleBetween(Vector3 a, Vector3 b, Vector3 n){
         // angle in [0,180]
         float angle = Vector3.Angle(a,b);
         float sign = Mathf.Sign(Vector3.Dot(n,Vector3.Cross(a,b)));
@@ -548,6 +573,11 @@ public class CharController : MonoBehaviour
     {
         //return vector - contactNormal * Vector2.Dot(vector, contactNormal);
         return vector;
+    }
+    
+    private void UpdateCurrentControlScheme(PlayerManager.ControlScheme controlScheme)
+    {
+        _isGamePad = controlScheme != PlayerManager.ControlScheme.KeyboardAndMouse;
     }
 
     //Uncomment to Debug

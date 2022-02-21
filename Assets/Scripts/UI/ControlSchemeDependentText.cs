@@ -10,7 +10,7 @@ public class ControlSchemeDependentText : MonoBehaviour
 {
     [SerializeField] private ControlSchemeTextList _text; 
     TMP_Text _UItext;
-    private TutorialUIUpdate _updater;
+    private ControlSchemeChangeBroadcaster _updater;
     private void Awake()
     {
         _UItext = this.GetComponentInChildren<TMP_Text>();
@@ -18,7 +18,7 @@ public class ControlSchemeDependentText : MonoBehaviour
 
     private void OnEnable()
     {
-        _updater = GetComponentInParent<TutorialUIUpdate>(); 
+        _updater = FindObjectOfType<ControlSchemeChangeBroadcaster>(); 
         _updater.onControlSchemeChange += UpdateText;
     }
     

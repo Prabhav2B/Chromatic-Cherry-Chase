@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TutorialUIUpdate : MonoBehaviour
+public class ControlSchemeChangeBroadcaster : MonoBehaviour
 {
     private PlayerManager _playerManager;
 
@@ -24,9 +24,8 @@ public class TutorialUIUpdate : MonoBehaviour
     {
         if(_lastControlScheme == _playerManager.CurrentControlScheme)
             return;
-
+        
         _lastControlScheme = _playerManager.CurrentControlScheme;
         onControlSchemeChange?.Invoke(_lastControlScheme);
-
     }
 }

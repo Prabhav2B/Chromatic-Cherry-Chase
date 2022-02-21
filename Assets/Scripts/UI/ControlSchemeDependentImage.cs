@@ -8,7 +8,7 @@ public class ControlSchemeDependentImage : MonoBehaviour
 {
         [SerializeField] private ControlSchemeImageList image; 
         private SVGImage _uiSvg;
-        private TutorialUIUpdate _updater;
+        private ControlSchemeChangeBroadcaster _updater;
     
         private void Awake()
         {
@@ -17,7 +17,7 @@ public class ControlSchemeDependentImage : MonoBehaviour
     
         private void OnEnable()
         {
-            _updater = GetComponentInParent<TutorialUIUpdate>(); 
+            _updater = FindObjectOfType<ControlSchemeChangeBroadcaster>(); 
             _updater.onControlSchemeChange += UpdateImage;
         }
         

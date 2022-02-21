@@ -133030,7 +133030,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2116674262}
-  - component: {fileID: 2116674263}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -133065,18 +133064,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2116674263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2116674261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 389620196b58a4448920f3efc4008fec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2120700739
 GameObject:
   m_ObjectHideFlags: 0
@@ -133626,19 +133613,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 278414384, guid: 0efc6f79c38722345812b02dd86b9131, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 287268513, guid: 0efc6f79c38722345812b02dd86b9131, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1525337900, guid: 0efc6f79c38722345812b02dd86b9131, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2086242404, guid: 0efc6f79c38722345812b02dd86b9131, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 645440998161016429, guid: 0efc6f79c38722345812b02dd86b9131,
         type: 3}
