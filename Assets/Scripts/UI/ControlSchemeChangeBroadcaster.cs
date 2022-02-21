@@ -12,11 +12,11 @@ public class ControlSchemeChangeBroadcaster : MonoBehaviour
     private PlayerManager.ControlScheme _lastControlScheme;
 
     public UnityAction<PlayerManager.ControlScheme> onControlSchemeChange;
-    
+
     void Start()
     {
         _playerManager = FindObjectOfType<PlayerManager>();
-        
+
         _lastControlScheme = _playerManager.CurrentControlScheme;
         onControlSchemeChange?.Invoke(_lastControlScheme);
     }
@@ -31,9 +31,9 @@ public class ControlSchemeChangeBroadcaster : MonoBehaviour
             return;
         }
 
-        if(_lastControlScheme == _playerManager.CurrentControlScheme)
+        if (_lastControlScheme == _playerManager.CurrentControlScheme)
             return;
-        
+
         _lastControlScheme = _playerManager.CurrentControlScheme;
         onControlSchemeChange?.Invoke(_lastControlScheme);
     }

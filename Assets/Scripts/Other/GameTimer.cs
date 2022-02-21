@@ -29,6 +29,7 @@ public class GameTimer : SingleInstance<GameTimer>
 
     public UnityAction onTimerExpired;
     public UnityAction onTimerTick;
+    public UnityAction<int> onTimerEvent;
 
 
     protected override void Awake()
@@ -106,9 +107,43 @@ public class GameTimer : SingleInstance<GameTimer>
             _currentTime--;
             onTimerTick?.Invoke();
             timerImage.fillAmount = _currentTime / _totalTime;
+
+            CheckForTimeEvent();
+
         }
 
         if (!_stopTimer)
             onTimerExpired?.Invoke();
+    }
+
+    private void CheckForTimeEvent()
+    {
+        switch (Mathf.CeilToInt(_currentTime))
+        {
+            case 350:
+            {
+                onTimerEvent(6);
+                break;
+            }
+            case 180:
+            {
+                onTimerEvent(3);
+                break;
+            }
+            case 120:
+            {
+                onTimerEvent(2);
+                break;
+            }
+            case 60:
+            {
+                onTimerEvent(1);
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
     }
 }

@@ -10,13 +10,13 @@ public class TimerUI : MonoBehaviour
 {
     private GameTimer _gameTimer;
     private TMP_Text _timeText;
+   
+    
     void Start()
     {
         _timeText = GetComponent<TMP_Text>();
         _gameTimer = FindObjectOfType<GameTimer>();
         _gameTimer.onTimerTick += UpdateTimeUI;
-        
-        
 
         _timeText.text = $"{_gameTimer.MinutesLeft:00}:{_gameTimer.SecondsLeft:00}";
     }
