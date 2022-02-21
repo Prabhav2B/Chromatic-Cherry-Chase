@@ -51341,7 +51341,7 @@ Tilemap:
       m_TileColorIndex: 1
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
-      m_AllTileFlags: 1
+      m_AllTileFlags: 1073741825
   - first: {x: -5, y: 0, z: 0}
     second:
       serializedVersion: 2
@@ -101395,30 +101395,46 @@ CompositeCollider2D:
         Y: 0
       - X: -208259883
         Y: -179999
-      - X: -208259887
-        Y: -180031
-      - X: -208579907
-        Y: -820070
-      - X: -208579956
-        Y: -820100
-      - X: -215619988
-        Y: -820100
-      - X: -215619995
-        Y: -820099
-      - X: -216739968
-        Y: -660103
-      - X: -217059966
-        Y: -820095
-      - X: -217059988
-        Y: -820100
-      - X: -228580004
-        Y: -820100
-      - X: -228580041
-        Y: -820085
-      - X: -228740069
-        Y: -660057
+      - X: -208419886
+        Y: 780017
+      - X: -208419886
+        Y: 780020
+      - X: -209219889
+        Y: 4140032
+      - X: -209219897
+        Y: 4140049
+      - X: -211619909
+        Y: 7500068
+      - X: -211619927
+        Y: 7500083
+      - X: -214979940
+        Y: 9260090
+      - X: -214979944
+        Y: 9260091
+      - X: -216899955
+        Y: 10060096
+      - X: -216899974
+        Y: 10060100
+      - X: -220419990
+        Y: 10060100
+      - X: -220420001
+        Y: 10060099
+      - X: -222500013
+        Y: 9580096
+      - X: -222500026
+        Y: 9580091
+      - X: -225380043
+        Y: 7980082
+      - X: -225380061
+        Y: 7980065
+      - X: -228100056
+        Y: 3820046
+      - X: -228100063
+        Y: 3820030
+      - X: -228740083
+        Y: 1100016
       - X: -228740084
-        Y: -660020
+        Y: 1100005
       - X: -228740084
         Y: 0
       - X: -436999868
@@ -101789,14 +101805,6 @@ CompositeCollider2D:
         Y: 113736606
       - X: 2850000384
         Y: 95740092
-    - - X: 2850740068
-        Y: 95000000
-      - X: 2868999936
-        Y: 95000000
-      - X: 2868999936
-        Y: 94736610
-      - X: 2850740068
-        Y: 94589355
     - - X: 2869000192
         Y: 95000000
       - X: 2869160285
@@ -101805,6 +101813,14 @@ CompositeCollider2D:
         Y: 94740000
       - X: 2869000192
         Y: 94736612
+    - - X: 2850740068
+        Y: 95000000
+      - X: 2868999936
+        Y: 95000000
+      - X: 2868999936
+        Y: 94736610
+      - X: 2850740068
+        Y: 94589355
   m_CompositePaths:
     m_Paths:
     - - {x: 455.05005, y: 37.606518}
@@ -101824,18 +101840,6 @@ CompositeCollider2D:
       - {x: 402.80002, y: 47.5}
       - {x: 423.7, y: 47.499973}
       - {x: 423.7, y: 34.2}
-    - - {x: 433.19998, y: 38}
-      - {x: 433.19998, y: 39.9}
-      - {x: 429.4, y: 39.89997}
-      - {x: 429.40002, y: 38}
-    - - {x: 448.4, y: 38}
-      - {x: 448.4, y: 39.9}
-      - {x: 444.6, y: 39.89997}
-      - {x: 444.60007, y: 38}
-    - - {x: 440.79996, y: 38}
-      - {x: 440.79996, y: 39.9}
-      - {x: 437, y: 39.89997}
-      - {x: 437.00003, y: 38}
     - - {x: 7.6739807, y: -9.542003}
       - {x: 7.6740394, y: -3.87401}
       - {x: 57.07401, y: -3.8419728}
@@ -102008,6 +102012,11 @@ CompositeCollider2D:
       - {x: -7.5580306, y: 1.9739996}
       - {x: -9.574, y: 1.9419712}
       - {x: -9.57403, y: 0}
+      - {x: -20.825994, y: -0.0179834}
+      - {x: -21.162003, y: 0.7500124}
+      - {x: -21.690006, y: 1.0060077}
+      - {x: -22.538012, y: 0.7979942}
+      - {x: -22.874027, y: 0}
       - {x: -53.199997, y: 0.0000294}
       - {x: -53.200027, y: 17.1}
       - {x: -57.07401, y: 17.141973}
@@ -102018,6 +102027,18 @@ CompositeCollider2D:
       - {x: -1.9259732, y: -7.67401}
       - {x: -0.07401, y: -7.6740394}
       - {x: -0.0739808, y: -9.526003}
+    - - {x: 448.4, y: 38}
+      - {x: 448.4, y: 39.9}
+      - {x: 444.6, y: 39.89997}
+      - {x: 444.60007, y: 38}
+    - - {x: 440.79996, y: 38}
+      - {x: 440.79996, y: 39.9}
+      - {x: 437, y: 39.89997}
+      - {x: 437.00003, y: 38}
+    - - {x: 433.19998, y: 38}
+      - {x: 433.19998, y: 39.9}
+      - {x: 429.4, y: 39.89997}
+      - {x: 429.40002, y: 38}
   m_VertexDistance: 0.09
   m_OffsetDistance: 0.00005
 --- !u!50 &1126528090
@@ -103969,8 +103990,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 131.4, y: 23.9}
-  m_SizeDelta: {x: 66.135, y: 50}
+  m_AnchoredPosition: {x: 139.765, y: 23.9}
+  m_SizeDelta: {x: 82.865, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1239416275
 MonoBehaviour:
@@ -104040,7 +104061,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -110262,7 +110283,7 @@ PrefabInstance:
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: -196.169
+      value: -190.994
       objectReference: {fileID: 0}
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
@@ -110307,7 +110328,7 @@ PrefabInstance:
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -18.991005
+      value: -21.579
       objectReference: {fileID: 0}
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
@@ -114147,7 +114168,7 @@ PrefabInstance:
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: -234.395
+      value: -212.78
       objectReference: {fileID: 0}
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
@@ -114192,7 +114213,7 @@ PrefabInstance:
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 126.781
+      value: 137.59
       objectReference: {fileID: 0}
     - target: {fileID: 7986097043290841979, guid: 44a9baedccfad324f826577a0c23876d,
         type: 3}
@@ -118268,8 +118289,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -34.1, y: 23.9}
-  m_SizeDelta: {x: 66.135, y: 50}
+  m_AnchoredPosition: {x: -35.97, y: 23.9}
+  m_SizeDelta: {x: 69.874, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1958957392
 MonoBehaviour:

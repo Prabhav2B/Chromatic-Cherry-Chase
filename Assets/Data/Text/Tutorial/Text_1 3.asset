@@ -15,5 +15,6 @@ MonoBehaviour:
   controlScheme1Text: <color=#5262bc>Hold [LEFT MOUSE BUTTON]</color> to initiate
     Dash. Use cursor to specify direction. <color=#5262bc>Releasing [LEFT MOUSE BUTTON]</color>
     executes Dash.
-  controlScheme2Text: Hold direction using [Analog Stick] and press [BUTTON WEST]
-    to Dash.
+  controlScheme2Text: <color=#5262bc>Hold [BUTTON WEST]</color> to initiate Dash.
+    Use analog stick to specify direction. <color=#5262bc>Releasing [BUTTON WEST]</color>
+    executes Dash.

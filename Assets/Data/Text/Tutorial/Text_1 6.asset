@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlScheme1Text: 'HOLD <color=#ff4507>[RIGHT MOUSE BUTTON]</color> to switch
     block form and back. '
-  controlScheme2Text: 'HOLD [RIGHT TRIGGER] to switch block form and back. Yellow
-    Platforms can only be traversed in Block Form! '
+  controlScheme2Text: 'HOLD <color=#ff4507>[RIGHT TRIGGER]</color> to switch block
+    form and back. '
