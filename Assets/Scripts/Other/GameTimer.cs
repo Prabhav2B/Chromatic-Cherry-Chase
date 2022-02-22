@@ -120,11 +120,6 @@ public class GameTimer : SingleInstance<GameTimer>
     {
         switch (Mathf.CeilToInt(_currentTime))
         {
-            case 350:
-            {
-                onTimerEvent(6);
-                break;
-            }
             case 180:
             {
                 onTimerEvent(3);
