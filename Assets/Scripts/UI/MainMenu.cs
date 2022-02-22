@@ -15,6 +15,8 @@ public class MainMenu : MonoBehaviour
     
     private bool _menuActive;
 
+    public bool Paused => _menuActive;
+
     private void Awake()
     {
         _playerManager = FindObjectOfType<PlayerManager>();
