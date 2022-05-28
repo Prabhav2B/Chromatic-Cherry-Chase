@@ -1171,7 +1171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpAudio: {fileID: 8300000, guid: e9f435fd77e5c5a41ba9bbb784cc1016, type: 3}
   dJumpAudio: {fileID: 8300000, guid: 32c99aea358a0a04182a1e1754014dd7, type: 3}
-  dashAudio: {fileID: 8300000, guid: 14915a1dfd0736a48a8aad104aa88251, type: 3}
+  dashAudio: {fileID: 8300000, guid: 743ab41a0070e0940bb6b10a3890da00, type: 3}
   walkAudio: {fileID: 0}
   landAudio: {fileID: 8300000, guid: eeb8b2832cfe1824386968a3e0020f1b, type: 3}
   switchAudio: {fileID: 8300000, guid: 0d96116af793cce48b0edbd2e989d8a3, type: 3}

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89edd8d29d5163c43903ce9bc56b3f3e, type: 3}
+  m_Name: TimeLimitHighNoMusic
+  m_EditorClassIdentifier: 
+  timeLimits:
+  - minutes: 6
+    seconds: 0
+    surveyURL: https://forms.gle/8hPPa3FbtETz3jha9

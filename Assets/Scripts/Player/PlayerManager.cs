@@ -202,6 +202,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnSkipForward(InputAction.CallbackContext context)
     {
+        //return;
         if(Paused || InputLock)
             return;
         
@@ -209,10 +210,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
         {
             var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
             var _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
-
+        
             if (_sceneTransitionManagement.IsInvalidSceneTransition(1))
                 return;
-
+        
             ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelEnd;
             SceneTransitionManagement s = FindObjectOfType<SceneTransitionManagement>();
             fadeOutAction += s.LoadNextLevel;
@@ -224,6 +225,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     public void OnSkipBackward(InputAction.CallbackContext context)
     {
+        //return;
         if(Paused || InputLock)
             return;
         
@@ -231,11 +233,11 @@ public class PlayerManager : SingleInstance<PlayerManager>
         {
             var _levelResetHandler = FindObjectOfType<LevelResetHandler>();
             var _screenFadeManager = FindObjectOfType<ScreenFadeManager>();
-
+        
             if (_sceneTransitionManagement.IsInvalidSceneTransition(-1))
                 return;
-
-
+        
+        
             ScreenFadeManager.PostFadeOut fadeOutAction = _levelResetHandler.ExecuteLevelEnd;
             SceneTransitionManagement s = FindObjectOfType<SceneTransitionManagement>();
             fadeOutAction += s.LoadLastLevel;
