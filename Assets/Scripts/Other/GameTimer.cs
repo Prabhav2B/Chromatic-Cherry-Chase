@@ -147,17 +147,17 @@ public class GameTimer : SingleInstance<GameTimer>
         {
             case 180:
             {
-                onTimerEvent(3);
+                onTimerEvent?.Invoke(3);
                 break;
             }
             case 120:
             {
-                onTimerEvent(2);
+                onTimerEvent?.Invoke(2);
                 break;
             }
             case 60:
             {
-                onTimerEvent(1);
+                onTimerEvent?.Invoke(1);
                 break;
             }
             default:
